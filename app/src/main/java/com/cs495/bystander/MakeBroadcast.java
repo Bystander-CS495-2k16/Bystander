@@ -191,7 +191,7 @@ public class MakeBroadcast {
         }
 
         /**
-         * This method is a hook for background threads and async tasks 
+         * This method is a hook for background threads and async tasks
          *that need to
          * provide the user a response UI when an exception occurs.
          */

@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.provider.MediaStore.Files.FileColumns;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +20,6 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.api.services.youtube.YouTube;
-/*import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.Activity;*/
 import android.content.Context;
 import android.widget.Toast;
 import android.net.ConnectivityManager;
@@ -33,16 +28,11 @@ import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import android.app.Dialog;
 import android.accounts.AccountManager;
-
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-
-import com.google.api.services.youtube.model.LiveBroadcastSnippet;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.youtube.model.LiveBroadcastStatus;
-import com.google.api.services.youtube.model.LiveBroadcast;
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
+import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
+import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,9 +41,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
     private static String TOKEN;
-    private static YouTube youtube;
-    //String SCOPE = "oauth2:https://www.googleapis.com/auth/youtube.upload";
-    //String SCOPE  = "oauth2:https://www.googleapis.com/auth/youtube";
     String SCOPE = "oauth2:https://www.googleapis.com/auth/youtube.force-ssl";
 
 
@@ -61,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initFfmpeg();
+        initFfmpegBinary();
     }
 
     static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
@@ -134,6 +123,63 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Your device is not currently online!", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    public void initFfmpeg() {
+
+
+        FFmpeg ffmpeg = FFmpeg.getInstance(this);
+        try {
+            ffmpeg.loadBinary(new LoadBinaryResponseHandler() {
+
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onFailure() {
+                }
+
+                @Override
+                public void onSuccess() {
+                }
+
+                @Override
+                public void onFinish() {
+                }
+            });
+        } catch (FFmpegNotSupportedException e) {
+            // Handle if FFmpeg is not supported by device
+            System.out.println("FFmpegNotSupportedException");
+        }
+
+    }
+
+    public void initFfmpegBinary() {
+        FFmpeg ffmpeg = FFmpeg.getInstance(this);
+        try {
+            // to execute "ffmpeg -version" command you just need to pass "-version"
+            ffmpeg.execute("-version", new ExecuteBinaryResponseHandler() {
+
+                @Override
+                public void onStart() {}
+
+                @Override
+                public void onProgress(String message) {}
+
+                @Override
+                public void onFailure(String message) {}
+
+                @Override
+                public void onSuccess(String message) {}
+
+                @Override
+                public void onFinish() {}
+            });
+        } catch (FFmpegCommandAlreadyRunningException e) {
+            // Handle if FFmpeg is already running
+            System.out.println("other ffmpeg exception");
         }
     }
 
