@@ -44,12 +44,13 @@ dependencies {
     compile 'com.google.android.gms:play-services-identity:8.4.0'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
 */
-
+    compile files('libs/javacv.jar')
+    compile files('libs/javacpp.jar')
     compile 'com.google.apis:google-api-services-youtube:v3-rev120-1.19.0'
     compile 'com.google.android.gms:play-services:4.2.42'
     compile 'com.google.api-client:google-api-client:1.19.1'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.github.hiteshsondhi88.libffmpeg:FFmpegAndroid:0.2.5'
+    //compile 'com.github.hiteshsondhi88.libffmpeg:FFmpegAndroid:0.2.5'
     //testCompile 'junit:junit:4.12'
 }

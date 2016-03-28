@@ -36,6 +36,9 @@ import java.util.Calendar;
 public class MakeBroadcast {
     String TOKEN;
     Activity mainAct;
+    public LiveStream liveStream;
+    public String RTMP_ADDRESS;
+    public String RTMP_STREAM_NAME;
 
     public MakeBroadcast(String token, Activity activity) {
         System.out.println("sksdjkfjjfjf");
@@ -132,6 +135,7 @@ public class MakeBroadcast {
 
 
                 LiveStream stream = new LiveStream();
+                liveStream = stream;
                 stream.setKind("youtube#liveStream");
                 stream.setSnippet(streamSnippet);
                 stream.setCdn(cdnSettings);
@@ -143,6 +147,11 @@ public class MakeBroadcast {
                         youtube.liveStreams().insert("snippet,cdn", stream);
                 LiveStream returnedStream = liveStreamInsert.execute();
                 System.out.println("address " + returnedStream.getCdn().getIngestionInfo().getIngestionAddress());
+                RTMP_ADDRESS = returnedStream.getCdn().getIngestionInfo().getIngestionAddress();
+                System.out.println("rtmp address " + returnedStream.getCdn().getIngestionInfo().getIngestionAddress());
+                System.out.println("rtmp stream name " + returnedStream.getCdn().getIngestionInfo().getStreamName());
+                RTMP_STREAM_NAME = returnedStream.getCdn().getIngestionInfo().getStreamName();
+
 
                 // Print information from the API response.
                 System.out.println("\n================== Returned Stream ==================\n");
@@ -157,6 +166,7 @@ public class MakeBroadcast {
                         youtube.liveBroadcasts().bind(returnedBroadcast.getId(), "id,contentDetails");
                 liveBroadcastBind.setStreamId(returnedStream.getId());
                 returnedBroadcast = liveBroadcastBind.execute();
+
 
                 // Print information from the API response.
                 System.out.println("\n================== Returned Bound Broadcast ==================\n");

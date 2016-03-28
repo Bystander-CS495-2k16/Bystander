@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,6 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/record_layout"
     tools:context="com.cs495.bystander.MainActivity">
 
     <Button
@@ -28,6 +29,7 @@
         android:layout_alignTop="@+id/takeVideoButton"
         android:layout_alignParentEnd="true" />
 
+
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -37,4 +39,11 @@
         android:id="@+id/BroadcastButton"
         android:layout_below="@+id/takeVideoButton"
         android:layout_centerHorizontal="true" />
-</RelativeLayout>
+
+    <Button
+        android:id="@+id/recorder_control"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_medium"
+        />
+</LinearLayout>
