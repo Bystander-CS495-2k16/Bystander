@@ -91,6 +91,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
         initLayout();
@@ -604,6 +605,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         ffmpeg_link = broadcast.RTMP_ADDRESS+ "/" + broadcast.RTMP_STREAM_NAME;
         System.out.println("rtmp address: " + broadcast.RTMP_ADDRESS);
+        System.out.println("STATUS: " + broadcast.liveStream.getStatus());
         initRecorder();
     }
 

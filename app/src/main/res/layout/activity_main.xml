@@ -17,7 +17,8 @@
         android:id="@+id/takeVideoButton"
         android:onClick="takeVideo"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_vertical" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -27,7 +28,8 @@
         android:id="@+id/account"
         android:onClick="pickAccount"
         android:layout_alignTop="@+id/takeVideoButton"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center_vertical" />
 
 
     <Button
@@ -38,7 +40,8 @@
         android:onClick="makeYouTube"
         android:id="@+id/BroadcastButton"
         android:layout_below="@+id/takeVideoButton"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_vertical" />
 
     <Button
         android:id="@+id/recorder_control"

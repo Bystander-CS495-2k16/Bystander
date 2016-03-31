@@ -48,10 +48,6 @@ public class MakeBroadcast {
         new makeBroadcast(token).execute();
     }
 
-    public void make() {
-
-    }
-
     public class makeBroadcast extends AsyncTask<Void, Void, Void> {
         Context mActivity; // changed this to context from example code's activity type
         String mScope;
@@ -94,11 +90,48 @@ public class MakeBroadcast {
             broadcastSnippet.setTitle(title);
 
 
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Calendar cal = Calendar.getInstance();
             System.out.println(dateFormat.format(cal.getTime())); //2014/08/06 16:00:22
-            broadcastSnippet.setScheduledStartTime(new DateTime(cal.getTime()));
+            String  date = new DateTime(cal.getTime()).toString();
+            String[] times = date.toString().split("T");
+            for (int i = 0; i < times.length; i++) {
+                System.out.println(i + ": " + times[i]);
+            }
+            String[] minutes = times[1].split(":");
+            // get the time and add a little to start the broadcast in the future
+            // starting with 30 seconds
+            for (int i = 0; i < minutes.length; i++) {
+                System.out.println(i + ": " + minutes[i]);
+            }
+            String[] min = minutes[2].split("\\.");
+            for (int i = 0; i < min.length; i++) {
+                System.out.println("minnn");
+                System.out.println(i + ": " + min[i]);
+            }
+            System.out.println("min[0] " + min[0]);
+            int newTime = Integer.parseInt(min[0]) + 30;
+            int mins = Integer.parseInt(minutes[1]);
+            if (newTime > 60) {
+                newTime = newTime - 60;
+                mins += 1;
+            }
 
+            //"yyyy-MM-dd HH:mm:ssZ"
+            String newDate;
+            if (mins < 10 && !(newTime < 10)) {
+                newDate = times[0] + " " + minutes[0] + ":" + "0" + mins + ":" + newTime;
+            } else if (mins < 10 && newTime < 10) {
+                newDate = times[0] + " " + minutes[0] + ":" + "0" +  mins + ":" + "0" + newTime;
+            } else if (newTime < 10 && !(mins < 10)){
+                newDate = times[0] + " " + minutes[0] + ":" + mins + ":" + "0" + newTime;
+            } else {
+                newDate = times[0] + " " + minutes[0] + ":" + mins + ":" + newTime;
+            }
+            System.out.println("new date " + newDate);
+
+            //broadcastSnippet.setScheduledStartTime(DateTime.parseRfc3339(newDate));
+            broadcastSnippet.setScheduledStartTime(new DateTime(newDate));
             //broadcastSnippet.setScheduledEndTime(new DateTime("2024-01-31T00:00:00.000Z"));
             System.out.println("after snippet");
             LiveBroadcastStatus status = new LiveBroadcastStatus();
@@ -166,7 +199,7 @@ public class MakeBroadcast {
                         youtube.liveBroadcasts().bind(returnedBroadcast.getId(), "id,contentDetails");
                 liveBroadcastBind.setStreamId(returnedStream.getId());
                 returnedBroadcast = liveBroadcastBind.execute();
-
+                liveStream = returnedStream;
 
                 // Print information from the API response.
                 System.out.println("\n================== Returned Bound Broadcast ==================\n");
