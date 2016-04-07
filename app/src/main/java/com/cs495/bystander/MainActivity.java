@@ -1,7 +1,9 @@
 package com.cs495.bystander;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.hardware.Camera;
@@ -48,13 +50,16 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 
 import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 /*import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;*/
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private final static String LOG_TAG = "MainActivity";
@@ -84,17 +89,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private Button recordButton;
     private LinearLayout mainLayout;
-
+    public static SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
-        initLayout();
+        DB mydb = new DB(this);
+        db = mydb.makeDB();
+
+        //Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        //setSupportActionBar(myToolbar);
+
+
+
+        //initLayout();
        // initRecorder();
 /*        setContentView(R.layout.activity_main);
 
@@ -103,6 +116,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         initLayout();
         initRecorder();*/
+    }
+
+    public static SQLiteDatabase getDb() {
+        return db;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -134,9 +171,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
 
-    private void initLayout() {
+/*    private void initLayout() {
 
-        mainLayout = (LinearLayout) this.findViewById(R.id.record_layout);
+        //mainLayout = (LinearLayout) this.findViewById(R.id.record_layout);
 
         recordButton = (Button) findViewById(R.id.recorder_control);
         recordButton.setText("Start");
@@ -147,7 +184,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         LinearLayout.LayoutParams layoutParam = new LinearLayout.LayoutParams(imageWidth, imageHeight);
         mainLayout.addView(cameraView, layoutParam);
         Log.v(LOG_TAG, "added cameraView to mainLayout");
-    }
+    }*/
 
     private void initRecorder() {
         Log.w(LOG_TAG,"initRecorder");
@@ -465,18 +502,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Uri fileUri;
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
-    private static String TOKEN;
-    String SCOPE = "oauth2:https://www.googleapis.com/auth/youtube.force-ssl";
-
-    static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
-
-    public void pickAccount(View view) {
-        String[] accountTypes = new String[]{"com.google"};
-        Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                accountTypes, false, null, null, null, null);
-        startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
-    }
-
 
     public void takeVideo(View view) {
 
@@ -494,64 +519,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == REQUEST_CODE_PICK_ACCOUNT) {
-
-            // Receiving a result from the AccountPicker
-            if (resultCode == RESULT_OK) {
-
-                mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                // With the account name acquired, go get the auth token
-                getUsername();
-            } else if (resultCode == RESULT_CANCELED) {
-
-                // The account picker dialog closed without selecting an account.
-                // Notify users that they must pick an account to proceed.
-                Toast.makeText(this, "Woah pick an account", Toast.LENGTH_SHORT).show();
-            }
-        }
-        //
-        //Handle the result from exceptions
-
-    }
-
-    String mEmail; // Received from newChooseAccountIntent(); passed to getToken()
-
-
-    /**
-     * Attempts to retrieve the username.
-     * If the account is not yet known, invoke the picker. Once the account is known,
-     * start an instance of the AsyncTask to get the auth token and do work with it.
-     */
-    private void getUsername() {
-        for (int i = 0; i < 15; i++) {System.out.println("iiii");}
-
-        if (mEmail == null) {
-            for (int i = 0; i < 15; i++) {System.out.println("jjjj");}
-
-        } else {
-            if (isDeviceOnline(this)) {
-                for (int i = 0; i < 15; i++) {System.out.println("hey");}
-                new GetUsernameTask(MainActivity.this, mEmail, SCOPE).execute();
-            } else {
-                Toast.makeText(this, "Your device is not currently online!", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-
-    public boolean isDeviceOnline(Context c) {
-        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getActiveNetworkInfo();
-        if (ni == null) {
-            // There are no active networks.
-            return false;
-        }
-        return ni.isConnected();
-    }
 
     /**
      * Create a File for saving an image or video
@@ -592,7 +559,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         return mediaFile;
     }
 
-    public void makeYouTube(View view) {
+/*    public void makeYouTube(View view) {
         System.out.println("sksdjkfjjfjf");
         //fFmpeg.execute();
         MakeBroadcast broadcast = new MakeBroadcast(TOKEN, this);
@@ -607,99 +574,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         System.out.println("rtmp address: " + broadcast.RTMP_ADDRESS);
         System.out.println("STATUS: " + broadcast.liveStream.getStatus());
         initRecorder();
-    }
+    }*/
 
 
-    public class GetUsernameTask extends AsyncTask<Void, Void, Void> {
-        Context mActivity; // changed this to context from example code's activity type
-        String mScope;
-        String mUsername;
 
-        GetUsernameTask(Context activity, String name, String scope) {
-            this.mActivity = activity;
-            this.mScope = scope;
-            System.out.println(mScope);
-            this.mUsername = name;
-        }
-
-        /**
-         * Executes the asynchronous job. This runs when you call execute()
-         * on the AsyncTask instance.
-         */
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                TOKEN = fetchToken();
-                for (int i = 0; i < 15; i++) {
-                    System.out.println("TOKENANNNNNN " + TOKEN);}
-                /*youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) throws IOException {}}).setApplicationName("VideoRecorder").build();
-                        // The fetchToken() method handles Google-specific exceptions,*/
-                // so this indicates something went, new  wrong at a higher level.
-                // TIP: Check for network connectivity before starting the AsyncTask.
-            } catch (IOException e) {
-
-            }
-            return null;
-        }
-
-        /**
-         * Gets an authentication token from Google and handles any
-         * GoogleAuthException that may o
-         * ccur.
-         */
-        protected String fetchToken() throws IOException {
-            try {
-                System.out.println("m activity " +  mUsername + " scope " + mScope);
-                return GoogleAuthUtil.getToken(mActivity, mUsername, mScope);
-            } catch (UserRecoverableAuthException userRecoverableException) {
-                // GooglePlayServices.apk is either old, disabled, or not present
-                // so we need to show the user some UI in the activity to recover.
-                handleException(userRecoverableException);
-            } catch (GoogleAuthException fatalException) {
-                // Some other type of unrecoverable exception has occurred.
-                // Report and log the error as appropriate for your app.
-            }
-            return null;
-        }
-
-        static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
-
-        public void handleException(final Exception e) {
-            // Because this call comes from the AsyncTask, we must ensure that the following
-            // code instead executes on the UI thread.
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (e instanceof GooglePlayServicesAvailabilityException) {
-                        // The Google Play services APK is old, disabled, or not present.
-                        // Show a dialog created by Google Play services that allows
-                        // the user to update the APK
-                        int statusCode = ((GooglePlayServicesAvailabilityException)e)
-                                .getConnectionStatusCode();
-                        Dialog dialog = GooglePlayServicesUtil.getErrorDialog(statusCode,
-                                MainActivity.this,
-                                REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
-                        dialog.show();
-                    } else if (e instanceof UserRecoverableAuthException) {
-                        // Unable to authenticate, such as when the user has not yet granted
-                        // the app access to the account, but the user can fix this.
-                        // Forward the user to an activity in Google Play services.
-                        Intent intent = ((UserRecoverableAuthException)e).getIntent();
-                        startActivityForResult(intent,
-                                REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
-                    }
-                }
-            });
-        }
-
-        /**
-         * This method is a hook for background threads and async tasks that need to
-         * provide the user a response UI when an exception occurs.
-         */
-
-    }
 
 
 }
