@@ -258,7 +258,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("add_gmail"));
             bindPreferenceSummaryToValue(findPreference("example_list"));
-            bindPreferenceSummaryToValue(findPreference("broadcastprivacy"));
+            //bindPreferenceSummaryToValue(findPreference("broadcastprivacy"));
             //newLilClickListener.onPreferenceClick(findPreference("addgmailpreference"));
             System.out.println("preference !!!! " + findPreference("addgmailpreference").getKey());
         }
@@ -284,7 +284,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_notification);
+            //addPreferencesFromResource(R.xml.pref_notification);
             setHasOptionsMenu(true);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
@@ -314,7 +314,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_data_sync);
+            //addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences

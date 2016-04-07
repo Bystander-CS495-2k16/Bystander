@@ -25,16 +25,16 @@
     <ListPreference
         android:key="example_list"
         android:title="@string/pref_title_add_friends_to_messages"
-        android:defaultValue="-1"
+        android:defaultValue="@string/pref_default_display_name"
         android:entries="@array/pref_example_list_titles"
         android:entryValues="@array/pref_example_list_values"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
     <ListPreference
-        android:key="@string/broadcastprivacy"
+        android:key="broadcastprivacy"
         android:title="Broadcast Privacy"
-        android:defaultValue="-1"
+        android:defaultValue="0"
         android:entries="@array/privacySettings"
         android:entryValues="@array/privacySettingsValues"
         android:negativeButtonText="@null"
@@ -43,11 +43,10 @@
     <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
      design guidelines. -->
     <Preference
-        android:title="addgmail"
+        android:title="Add Gmail"
         android:key="addgmailpreference"
         android:enabled="true">
     </Preference>
-
 
 
 </PreferenceScreen>

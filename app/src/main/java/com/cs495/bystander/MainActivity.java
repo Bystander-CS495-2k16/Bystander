@@ -122,6 +122,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return db;
     }
 
+    public void goToRights(View view) {
+        Intent intent = new Intent(this, YourRights.class);
+        startActivity(intent);
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

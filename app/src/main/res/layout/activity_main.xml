@@ -17,30 +17,17 @@
         android:text="@string/takeVidButtonText"
         android:id="@+id/takeVideoButton"
         android:onClick="takeVideo"
+        android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true"
-        android:layout_gravity="center_vertical" />
+        android:layout_alignParentStart="true" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/accountString"
-        android:id="@+id/account"
-        android:onClick="pickAccount"
-        android:layout_alignTop="@+id/takeVideoButton"
-        android:layout_alignParentEnd="true"
-        android:layout_gravity="center_vertical" />
-
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/broadcastString"
-        android:onClick="makeYouTube"
-        android:id="@+id/BroadcastButton"
-        android:layout_below="@+id/takeVideoButton"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_vertical" />
+        android:text="View Your Rights"
+        android:id="@+id/button"
+        android:onClick="goToRights"
+        android:layout_toEndOf="@+id/takeVideoButton"
+        android:layout_alignTop="@+id/takeVideoButton" />
 </RelativeLayout>
