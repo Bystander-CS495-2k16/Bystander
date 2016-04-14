@@ -3,7 +3,7 @@
     <string name="accountString">Choose account</string>
     <string name="takeVidButtonText">Take video!</string>
     <string name="broadcastString">Broadcast!</string>
-    <string name="action_settings">settings</string>
+    <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
