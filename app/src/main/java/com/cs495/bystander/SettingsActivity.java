@@ -152,16 +152,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     }
                 } else {
                     System.out.println("state hey " + preference.getKey());
-                    state = preference.getSummary().toString();
+//                    state = preference.getSummary().toString();
                 }
                 System.out.println("setting preference " + preference.getSummary());
-                state = preference.getSummary().toString();
+//                state = preference.getSummary().toString();
 
             } else if (preference instanceof EditTextPreference) {
                 System.out.println("HEAYAYYAYAYAY");
                 pickAccount(activity);
             } else if (preference instanceof SwitchPreference) {
-                System.out.println("pref " + preference.getSummary());
+//                System.out.println("pref " + preference.getSummary());
 
             } if (preference instanceof RingtonePreference) {
                 // For ringtone preferences, look up the correct display value
