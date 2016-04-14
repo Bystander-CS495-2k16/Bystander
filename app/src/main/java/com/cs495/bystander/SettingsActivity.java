@@ -200,7 +200,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            System.out.println("HAHAAHHHAHA");
             pickAccount(SettingsActivity.this);
             return true;
         }
