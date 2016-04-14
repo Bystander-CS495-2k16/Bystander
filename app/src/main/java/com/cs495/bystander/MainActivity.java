@@ -1,10 +1,12 @@
 package com.cs495.bystander;
 
+import android.Manifest;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +21,8 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity  {
 
     public static SQLiteDatabase db;
+    int PERMISSION_CAMERA;
+    int PERMISSION_STORAGE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,9 @@ public class MainActivity extends AppCompatActivity  {
 
         DB mydb = new DB(this);
         db = mydb.makeDB();
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_STORAGE);
 
     }
 
