@@ -34,6 +34,8 @@ public class DB extends SQLiteOpenHelper {
                     + "Rights"
                     + " ( state TEXT PRIMARY KEY, rights TEXT);");
 
+            db.execSQL("CREATE TABLE IF NOT EXISTS videos (filename TEXT PRIMARY KEY);");
+
             for (int i = 0; i < 15; i++) {
                 System.out.println("DB");
             }

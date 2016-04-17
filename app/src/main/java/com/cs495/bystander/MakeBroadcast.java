@@ -1,14 +1,9 @@
 package com.cs495.bystander;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
-import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -23,11 +18,7 @@ import java.text.DateFormat;
 import com.google.api.services.youtube.model.LiveStreamSnippet;
 import com.google.api.services.youtube.model.CdnSettings;
 import com.google.api.services.youtube.model.LiveStream;
-
 import android.app.Activity;
-import android.view.View;
-
-import java.io.IOException;
 import java.util.Calendar;
 
 /**

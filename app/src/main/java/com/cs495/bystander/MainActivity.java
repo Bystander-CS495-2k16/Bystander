@@ -1,10 +1,12 @@
 package com.cs495.bystander;
 
+import android.Manifest;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +21,9 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity  {
 
     public static SQLiteDatabase db;
+    int PERMISSION_CAMERA;
+    int PERMISSION_STORAGE;
+    String FILENAME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,9 @@ public class MainActivity extends AppCompatActivity  {
         DB mydb = new DB(this);
         db = mydb.makeDB();
 
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_STORAGE);
     }
 
     // method to init return a database
@@ -73,15 +81,31 @@ public class MainActivity extends AppCompatActivity  {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
-        File fileUri = getOutputMediaFile(MEDIA_TYPE_VIDEO); // create a file to save the image
+        File file = getOutputMediaFile(MEDIA_TYPE_VIDEO);
+        FILENAME = file.toString();
+        fileUri = Uri.fromFile(file); // create a file to save the image
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
         intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+        System.out.println("filename " + fileUri.toString());
 
         // start the image capture Intent
         startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
 
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+                new UploadVideo(FILENAME);
+                // Do something with the contact here (bigger example below)
+            }
+        }
     }
 
 
@@ -109,19 +133,18 @@ public class MainActivity extends AppCompatActivity  {
         File mediaFile;
         if (type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".jpg");
+                    "IMG_" + timeStamp + ".mp4");
+            System.out.println("MEDIA FILE " + mediaFile);
+            MainActivity.db.execSQL("INSERT OR REPLACE INTO videos (filename) VALUES (\'" + mediaFile.toString() + "\')");
         } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+/*            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "VID_" + timeStamp + ".mp4");*/
+            mediaFile = new File(mediaStorageDir.getPath() +
                     "VID_" + timeStamp + ".mp4");
         } else {
             return null;
         }
         return mediaFile;
     }
-
-
-
-
-
 
 }

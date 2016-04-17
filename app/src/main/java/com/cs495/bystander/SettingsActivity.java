@@ -27,7 +27,6 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthException;
@@ -64,6 +63,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static boolean isPrivate;
     private static Activity activity;
     public static SQLiteDatabase db;
+    String mEmail; // Received from newChooseAccountIntent(); passed to getToken()
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +151,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         isPrivate = false;
                     }
                 } else {
+                    // Todo: fix these null references that are commented out
                     System.out.println("state hey " + preference.getKey());
 //                    state = preference.getSummary().toString();
                 }
@@ -373,8 +374,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         }
 
-        String mEmail; // Received from newChooseAccountIntent(); passed to getToken()
-
 
         /**
          * Attempts to retrieve the username.
@@ -382,9 +381,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
          * start an instance of the AsyncTask to get the auth token and do work with it.
          */
         private void getUsername() {
-            for (int i = 0; i < 15; i++) {
-                System.out.println("iiii");
-            }
 
             if (mEmail == null) {
                 for (int i = 0; i < 15; i++) {
@@ -414,6 +410,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return ni.isConnected();
         }
 
+        public void addTokenToDB() {
+            MainActivity.db.execSQL("INSERT OR REPLACE INTO tokens (email, token) VALUES (\'" + mEmail+ "\', \'" + TOKEN + "\')");
+        }
+
         public class GetUsernameTask extends AsyncTask<Void, Void, Void> {
             Context mActivity; // changed this to context from example code's activity type
             String mScope;
@@ -434,15 +434,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             protected Void doInBackground(Void... params) {
                 try {
                     TOKEN = fetchToken();
-                    for (int i = 0; i < 15; i++) {
+                    /*for (int i = 0; i < 15; i++) {
                         System.out.println("TOKENANNNNNN " + TOKEN);
-                    }
-                    /*youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
-                        @Override
-                        public void initialize(HttpRequest request) throws IOException {}}).setApplicationName("VideoRecorder").build();
-                            // The fetchToken() method handles Google-specific exceptions,*/
-                    // so this indicates something went, new  wrong at a higher level.
-                    // TIP: Check for network connectivity before starting the AsyncTask.
+                    }*/
+                    addTokenToDB();
+                    //MainActivity.db.execSQL("select * from tokens;");
+                    /*String output = "";
+                    Cursor c = MainActivity.db.rawQuery("SELECT * FROM tokens", null);
+                    c.moveToFirst();
+                    c.moveToNext(); // skip android_metadata table"insert
+                    int i = 0;
+                    while (c.isAfterLast() == false) {
+                        System.out.println(c.toString());
+                        System.out.println("token: " + c.getString( c.getColumnIndex("token")));
+                        System.out.println(c.getString(c.getColumnIndex("email")));
+                        c.moveToNext();
+                        i++;
+                    }*/
+
                 } catch (IOException e) {
 
                 }
