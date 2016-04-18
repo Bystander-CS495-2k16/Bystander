@@ -21,13 +21,4 @@
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View Your Rights"
-        android:id="@+id/button"
-        android:onClick="goToRights"
-        android:layout_toEndOf="@+id/takeVideoButton"
-        android:layout_alignTop="@+id/takeVideoButton" />
 </RelativeLayout>

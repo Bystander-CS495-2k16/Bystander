@@ -1,12 +1,17 @@
 package com.cs495.bystander;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,10 +19,16 @@ import android.util.Log;
 import android.view.View;
 
 import java.io.File;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import android.view.Menu;
 import android.view.MenuItem;
+import java.util.Locale;
+import android.speech.RecognizerIntent;
+import android.content.ActivityNotFoundException;
+import android.widget.Toast;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -25,6 +36,14 @@ public class MainActivity extends AppCompatActivity  {
     int PERMISSION_CAMERA;
     int PERMISSION_STORAGE;
     String FILENAME;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private final int REQ_CODE_TITLE = 101;
+    boolean manualVideoDescriptions = true;
+    String TITLE;
+    String DESCRIPTION;
+    int partofdescription;
+    boolean isPublic = true;
+    boolean automaticUpload = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +64,6 @@ public class MainActivity extends AppCompatActivity  {
         return db;
     }
 
-    public void goToRights(View view) {
-        Intent intent = new Intent(this, YourRights.class);
-        startActivity(intent);
-
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -62,12 +74,19 @@ public class MainActivity extends AppCompatActivity  {
     // taken from an Android dev tutorial
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
-                Intent intent = new Intent(this, Settings.class);
+                intent = new Intent(this, Settings.class);
                 startActivity(intent);
                 return true;
+            case R.id.yourRights:
+                intent = new Intent(this, YourRights.class);
+                startActivity(intent);
+            case R.id.badsettings:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
             default:
                 return false;
         }
@@ -102,12 +121,50 @@ public class MainActivity extends AppCompatActivity  {
         if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                // The user picked a contact.
-                // The Intent's data Uri identifies which contact was selected.
-                new UploadVideo(FILENAME);
+
+                if (automaticUpload) {
+                    if (isDeviceOnline(this)) {
+                        if (manualVideoDescriptions) { // if you upload descriptions using speech to text
+                            promptSpeechInput("description");
+                            promptSpeechInput("title");
+                        } else {
+                            new UploadVideo(FILENAME);
+                        }
+                    } else {
+                        Toast.makeText(this, "Device is not online. Please manually upload later.", Toast.LENGTH_SHORT).show();
+                    }
+                }
                 // Do something with the contact here (bigger example below)
             }
+        } else if (REQ_CODE_SPEECH_INPUT == requestCode) {
+            if (resultCode == RESULT_OK && null != data) {
+                ArrayList<String> result = data
+                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                DESCRIPTION = result.get(0);
+                System.out.println("GOT TEXT!!!! " + result.get(0));
+                System.out.println("DESCRIPTION " + DESCRIPTION);
+                new UploadVideo(FILENAME, TITLE, DESCRIPTION, manualVideoDescriptions, isPublic);
+            }
+        } else if (REQ_CODE_TITLE == requestCode) {
+            if (resultCode == RESULT_OK && null != data) {
+                ArrayList<String> result = data
+                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                TITLE = result.get(0);
+                System.out.println("GOT TEXT!!!! " + result.get(0));
+                System.out.println("TITLE " + TITLE);
+            }
         }
+    }
+
+
+    public boolean isDeviceOnline(Context c) {
+        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni == null) {
+            // There are no active networks.
+            return false;
+        }
+        return ni.isConnected();
     }
 
 
@@ -135,7 +192,7 @@ public class MainActivity extends AppCompatActivity  {
         File mediaFile;
         if (type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".mp4");
+                    "VID_" + timeStamp + ".mp4");
             System.out.println("MEDIA FILE " + mediaFile);
             MainActivity.db.execSQL("INSERT OR REPLACE INTO videos (filename) VALUES (\'" + mediaFile.toString() + "\')");
         } else if (type == MEDIA_TYPE_VIDEO) {
@@ -147,6 +204,29 @@ public class MainActivity extends AppCompatActivity  {
             return null;
         }
         return mediaFile;
+    }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    public void promptSpeechInput(String part) {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "say what's on your mind");
+        try {
+            if (part == "description") {
+                startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+            } else if (part == "title"){
+                startActivityForResult(intent, REQ_CODE_TITLE);
+            }
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    "Speech not supported!",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

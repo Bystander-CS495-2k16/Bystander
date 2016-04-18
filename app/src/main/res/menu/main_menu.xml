@@ -6,5 +6,9 @@
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings" />
 
+    <item android:id="@+id/yourRights"
+        android:title="View Rights"/>
 
+    <item android:id="@+id/badsettings"
+        android:title="Old Settings That Actually Do Oauth"/>
 </menu>

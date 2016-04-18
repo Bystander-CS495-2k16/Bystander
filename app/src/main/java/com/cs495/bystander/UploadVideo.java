@@ -33,6 +33,10 @@ import android.os.AsyncTask;
 public class UploadVideo {
     private String TOKEN;
     private String filename;
+    private String TITLE;
+    private String DESCRIPTION;
+    private boolean MANUALDESCRIPTIONS;
+    private boolean isPublic;
 
     public UploadVideo(String fileName) {
         this.filename = fileName;
@@ -42,6 +46,18 @@ public class UploadVideo {
         UploadTask up = new UploadTask();
         up.execute(fileName);
         // Todo: need to deal with null token in Main Activity
+    }
+
+    public UploadVideo(String filename, String title, String description, boolean manualDescriptions,boolean isPublic) {
+        this.filename = filename;
+        this.TITLE = title;
+        this.DESCRIPTION = description;
+        this.MANUALDESCRIPTIONS = manualDescriptions;
+        this.isPublic = isPublic;
+        getToken();
+        System.out.println("FILENAME " + filename + " title " + TITLE + " description " + DESCRIPTION);
+        UploadTask up = new UploadTask();
+        up.execute(filename);
     }
 
     public void getToken() {
@@ -94,7 +110,11 @@ public class UploadVideo {
                 // Set the video to be publicly visible. This is the default
                 // setting. Other supporting settings are "unlisted" and "private."
                 VideoStatus status = new VideoStatus();
-                status.setPrivacyStatus("public");
+                if (isPublic) {
+                    status.setPrivacyStatus("public");
+                } else {
+                    status.setPrivacyStatus("private");
+                }
                 videoObjectDefiningMetadata.setStatus(status);
 
                 VideoSnippet snippet = new VideoSnippet();
@@ -104,17 +124,22 @@ public class UploadVideo {
                 // multiple files. You should remove this code from your project
                 // and use your own standard names instead.
                 Calendar cal = Calendar.getInstance();
-                snippet.setTitle("Test Upload via Java on " + cal.getTime());
-                snippet.setDescription(
-                        "Video uploaded via YouTube Data API V3 using the Java library " + "on " + cal.getTime());
+                if (MANUALDESCRIPTIONS) {
+                    snippet.setTitle(TITLE);
+                    snippet.setDescription(DESCRIPTION);
+                } else {
+                    snippet.setTitle("Test Upload via Java on " + cal.getTime());
+                    snippet.setDescription(
+                            "Video uploaded via YouTube Data API V3 using the Java library " + "on " + cal.getTime());
+                }
 
                 // Set the keyword tags that you want to associate with the video.
                 List<String> tags = new ArrayList<String>();
-                tags.add("test");
-                tags.add("example");
-                tags.add("java");
-                tags.add("YouTube Data API V3");
-                tags.add("erase me");
+                tags.add("Bystander");
+                //tags.add("example");
+                //tags.add("java");
+                //tags.add("YouTube Data API V3");
+                //tags.add("erase me");
                 snippet.setTags(tags);
 
                 // Add the completed snippet object to the video resource.
