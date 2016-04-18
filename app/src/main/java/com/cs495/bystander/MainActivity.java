@@ -214,12 +214,14 @@ public class MainActivity extends AppCompatActivity  {
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                "say what's on your mind");
         try {
             if (part == "description") {
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                        "Add a title for your video");
                 startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
             } else if (part == "title"){
+                intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                        "Add a description to your video");
                 startActivityForResult(intent, REQ_CODE_TITLE);
             }
         } catch (ActivityNotFoundException a) {
