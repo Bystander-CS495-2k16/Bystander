@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "996700620517",
+    "project_id": "bystander-d415f"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996700620517:android:b3b73fe0721b2360",
+        "android_client_info": {
+          "package_name": "com.cs495.bystander"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996700620517-tckeak1b1eq5hi4qijop59fjt1olpsvn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cs495.bystander",
+            "certificate_hash": "75C83830869B4591397CB4A63C78512061124E2B"
+          }
+        },
+        {
+          "client_id": "996700620517-m3fnuj8hmlclcddqs4fb6vchk98vkkes.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqK5N5j4zwgX9ZFQljoqxoVI2DaD6UDe4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

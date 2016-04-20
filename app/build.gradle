@@ -1,6 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
+    productFlavors {
+        x86 {
+            ndk {
+                abiFilter "x86"
+            }
+        }
+        armv7 {
+            ndk {
+                abiFilter "armeabi-v7a"
+            }
+        }
+    }
+
     signingConfigs {
         config {
             keyAlias 'bystanderKey'
@@ -45,8 +58,11 @@ dependencies {
     //compile 'com.google.android.gms:play-services-analytics:8.3.0'
     //compile 'com.google.api-client:google-api-client:1.19.1'
     compile 'com.android.support:appcompat-v7:23.0.0-alpha1'
+    compile 'com.google.android.gms:play-services-auth:8.4.0'
     //compile 'com.android.support:multidex:1.0.0'
     //compile 'com.google.android.gms:play-services-ads:8.4.0'
     //compile 'com.google.android.gms:play-services-identity:8.4.0'
     //compile 'com.google.android.gms:play-services-gcm:8.4.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
