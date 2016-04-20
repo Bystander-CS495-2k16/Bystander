@@ -42,10 +42,6 @@ public class Settings extends Activity {
             System.out.println("BOOOOOOOOOOOOOOOP");
             if (key.equals("State")) {
                 Preference connectionPref = findPreference(key);
-                // Set summary to be the user-description for the selected value
-                System.out.println("STATEEEEEE");
-                System.out.println("SUMMMARY " + connectionPref.getSummary());
-               // connectionPref.setSummary(sharedPreferences.getString(key, ""));
             }
         }
 
