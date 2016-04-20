@@ -28,7 +28,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     SignInButton signIn_btn;
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "SettingsActivity";
-    ProgressDialog progress_dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +38,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         setContentView(R.layout.activity_sign_in);
         customizeSignBtn();
         setBtnClickListeners();
-        progress_dialog = new ProgressDialog(this);
-        progress_dialog.setMessage("Signing in....");
     }
 
     private void buidNewGoogleApiClient(){
@@ -58,7 +55,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         // Button listeners
         signIn_btn.setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
 
     }
 
@@ -128,8 +124,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             GoogleSignInAccount acct = result.getSignInAccount();
             TextView user_name= (TextView)findViewById(R.id.userName);
             TextView email_id= (TextView)findViewById(R.id.emailId);
-            user_name.setText("UserName: "+ acct.getDisplayName());
-            email_id.setText("Email Id: " + acct.getEmail());
+            user_name.setText("User Name: "+ acct.getDisplayName());
+            email_id.setText("Email: " + acct.getEmail());
             updateUI(true);
         } else {
             updateUI(false);
