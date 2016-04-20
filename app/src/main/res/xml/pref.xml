@@ -4,10 +4,9 @@
     <PreferenceCategory android:title="User Info">
 
         <Preference
-            android:title="Add Gmail"
-            android:key="addgmailpreference"
-            android:enabled="true">
-        </Preference>
+            android:key="signin"
+            android:title="Manage Google Account"
+            android:enabled="true" />
 
         <ListPreference
             android:key="State"
