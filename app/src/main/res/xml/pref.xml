@@ -35,7 +35,7 @@
         <SwitchPreference
             android:key="use_speech"
             android:title="Speech to Text"
-            android:summary="Use speech to text for video description?"
+            android:summary="Use speech to text for video information?"
             android:defaultValue="true"/>
     </PreferenceCategory>
 
