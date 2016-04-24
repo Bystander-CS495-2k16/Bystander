@@ -3,6 +3,8 @@ package com.cs495.bystander;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +31,9 @@ import java.util.Locale;
 import android.speech.RecognizerIntent;
 import android.content.ActivityNotFoundException;
 import android.widget.Toast;
+
+import com.google.android.gms.drive.Permission;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
@@ -35,6 +41,7 @@ public class MainActivity extends AppCompatActivity  {
     public static SQLiteDatabase db;
     int PERMISSION_CAMERA;
     int PERMISSION_STORAGE;
+    int PERMISSION_AUDIO;
     String FILENAME;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private final int REQ_CODE_TITLE = 101;
@@ -42,8 +49,9 @@ public class MainActivity extends AppCompatActivity  {
     String TITLE;
     String DESCRIPTION;
     int partofdescription;
-    boolean isPublic = true;
-    boolean automaticUpload = true;
+    boolean isPublic;
+    boolean automaticUpload;
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +61,20 @@ public class MainActivity extends AppCompatActivity  {
         DB mydb = new DB(this);
         db = mydb.makeDB();
 
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
+        }
+        permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_STORAGE);
+        }
+        permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_AUDIO);
+        }
 
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_STORAGE);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     }
 
@@ -122,6 +141,8 @@ public class MainActivity extends AppCompatActivity  {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
 
+                automaticUpload = prefs.getBoolean("example_switch", false);
+
                 if (automaticUpload) {
                     if (isDeviceOnline(this)) {
                         if (manualVideoDescriptions) { // if you upload descriptions using speech to text
@@ -143,6 +164,7 @@ public class MainActivity extends AppCompatActivity  {
                 DESCRIPTION = result.get(0);
                 System.out.println("GOT TEXT!!!! " + result.get(0));
                 System.out.println("DESCRIPTION " + DESCRIPTION);
+                isPublic = prefs.getBoolean("broadcast", false);
                 new UploadVideo(FILENAME, TITLE, DESCRIPTION, manualVideoDescriptions, isPublic);
             }
         } else if (REQ_CODE_TITLE == requestCode) {

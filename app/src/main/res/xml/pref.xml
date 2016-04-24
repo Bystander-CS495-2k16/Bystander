@@ -28,8 +28,8 @@
 
         <SwitchPreference
             android:key="broadcast"
-            android:title="Broadcast Privacy"
-            android:summary="Want to make your broadcasts public?"
+            android:title="Upload Privacy"
+            android:summary="Want to make your uploads public?"
             android:defaultValue="true"/>
     </PreferenceCategory>
 
