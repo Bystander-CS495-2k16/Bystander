@@ -31,6 +31,12 @@
             android:title="Upload Privacy"
             android:summary="Want to make your uploads public?"
             android:defaultValue="true"/>
+
+        <SwitchPreference
+            android:key="use_speech"
+            android:title="Speech to Text"
+            android:summary="Use speech to text for video description?"
+            android:defaultValue="true"/>
     </PreferenceCategory>
 
 

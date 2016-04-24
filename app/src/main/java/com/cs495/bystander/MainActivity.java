@@ -2,6 +2,7 @@ package com.cs495.bystander;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -16,8 +17,10 @@ import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 
@@ -30,6 +33,8 @@ import android.view.MenuItem;
 import java.util.Locale;
 import android.speech.RecognizerIntent;
 import android.content.ActivityNotFoundException;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.drive.Permission;
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity  {
     String FILENAME;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private final int REQ_CODE_TITLE = 101;
-    boolean manualVideoDescriptions = true;
+    boolean manualVideoDescriptions;
     String TITLE;
     String DESCRIPTION;
     int partofdescription;
@@ -145,11 +150,40 @@ public class MainActivity extends AppCompatActivity  {
 
                 if (automaticUpload) {
                     if (isDeviceOnline(this)) {
+                        manualVideoDescriptions = prefs.getBoolean("use_speech", false);
                         if (manualVideoDescriptions) { // if you upload descriptions using speech to text
                             promptSpeechInput("description");
                             promptSpeechInput("title");
                         } else {
-                            new UploadVideo(FILENAME);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            builder.setTitle("Video Details");
+                            LinearLayout layout = new LinearLayout(this);
+                            layout.setOrientation(LinearLayout.VERTICAL);
+                            final EditText titleInput = new EditText(this);
+                            final EditText descInput = new EditText(this);
+                            titleInput.setInputType(InputType.TYPE_CLASS_TEXT);
+                            descInput.setInputType(InputType.TYPE_CLASS_TEXT);
+                            titleInput.setHint("Title");
+                            descInput.setHint("Description");
+                            layout.addView(titleInput);
+                            layout.addView(descInput);
+                            builder.setView(layout);
+                            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    TITLE = titleInput.getText().toString();
+                                    DESCRIPTION = descInput.getText().toString();
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                            builder.show();
+
+                            new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic);
                         }
                     } else {
                         Toast.makeText(this, "Device is not online. Please manually upload later.", Toast.LENGTH_SHORT).show();
