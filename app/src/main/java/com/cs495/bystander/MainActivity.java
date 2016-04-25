@@ -174,6 +174,9 @@ public class MainActivity extends AppCompatActivity  {
                                 public void onClick(DialogInterface dialog, int which) {
                                     TITLE = titleInput.getText().toString();
                                     DESCRIPTION = descInput.getText().toString();
+                                    isPublic = prefs.getBoolean("broadcast", false);
+                                    TOKEN = prefs.getString("oauth", null);
+                                    new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic, TOKEN);
                                 }
                             });
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -183,8 +186,6 @@ public class MainActivity extends AppCompatActivity  {
                                 }
                             });
                             builder.show();
-                            TOKEN = prefs.getString("oauth", null);
-                            new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic, TOKEN);
                         }
                     } else {
                         Toast.makeText(this, "Device is not online. Please manually upload later.", Toast.LENGTH_SHORT).show();
