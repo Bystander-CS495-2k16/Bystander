@@ -108,9 +108,6 @@ public class MainActivity extends AppCompatActivity  {
             case R.id.yourRights:
                 intent = new Intent(this, YourRights.class);
                 startActivity(intent);
-            case R.id.badsettings:
-                intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
             default:
                 return false;
         }
