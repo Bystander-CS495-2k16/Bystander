@@ -109,9 +109,6 @@ public class MainActivity extends AppCompatActivity  {
             case R.id.yourRights:
                 intent = new Intent(this, YourRights.class);
                 startActivity(intent);
-            case R.id.badsettings:
-                intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
             default:
                 return false;
         }
@@ -148,6 +145,8 @@ public class MainActivity extends AppCompatActivity  {
             if (resultCode == RESULT_OK) {
 
                 automaticUpload = prefs.getBoolean("example_switch", false);
+                isPublic = prefs.getBoolean("broadcast", false);
+                TOKEN = prefs.getString("oauth", null);
 
                 if (automaticUpload) {
                     if (isDeviceOnline(this)) {
@@ -174,14 +173,13 @@ public class MainActivity extends AppCompatActivity  {
                                 public void onClick(DialogInterface dialog, int which) {
                                     TITLE = titleInput.getText().toString();
                                     DESCRIPTION = descInput.getText().toString();
-                                    isPublic = prefs.getBoolean("broadcast", false);
-                                    TOKEN = prefs.getString("oauth", null);
                                     new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic, TOKEN);
                                 }
                             });
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(MainActivity.this, "Video Upload Cancelled", Toast.LENGTH_SHORT).show();
                                     dialog.cancel();
                                 }
                             });
@@ -190,8 +188,52 @@ public class MainActivity extends AppCompatActivity  {
                     } else {
                         Toast.makeText(this, "Device is not online. Please manually upload later.", Toast.LENGTH_SHORT).show();
                     }
+                } else { // Ask for manual upload
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Would you like to upload this video?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AlertDialog.Builder upload = new AlertDialog.Builder(MainActivity.this);
+                            upload.setTitle("Video Details");
+                            LinearLayout layout = new LinearLayout(MainActivity.this);
+                            layout.setOrientation(LinearLayout.VERTICAL);
+                            final EditText titleInput = new EditText(MainActivity.this);
+                            final EditText descInput = new EditText(MainActivity.this);
+                            titleInput.setInputType(InputType.TYPE_CLASS_TEXT);
+                            descInput.setInputType(InputType.TYPE_CLASS_TEXT);
+                            titleInput.setHint("Title");
+                            descInput.setHint("Description");
+                            layout.addView(titleInput);
+                            layout.addView(descInput);
+                            upload.setView(layout);
+                            upload.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    TITLE = titleInput.getText().toString();
+                                    DESCRIPTION = descInput.getText().toString();
+                                    new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic, TOKEN);
+                                }
+                            });
+                            upload.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(MainActivity.this, "Video Upload Cancelled", Toast.LENGTH_SHORT).show();
+                                    dialog.cancel();
+                                }
+                            });
+                            upload.show();
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
                 }
-                // Do something with the contact here (bigger example below)
+
             }
         } else if (REQ_CODE_SPEECH_INPUT == requestCode) {
             if (resultCode == RESULT_OK && null != data) {
