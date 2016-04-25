@@ -26,8 +26,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 
 public class UploadVideo {
@@ -37,10 +40,10 @@ public class UploadVideo {
     private String DESCRIPTION;
     private boolean MANUALDESCRIPTIONS;
     private boolean isPublic;
+    SharedPreferences prefs;
 
     public UploadVideo(String fileName) {
         this.filename = fileName;
-        getToken();
         System.out.println("FILENAME " + fileName);
         //upload(initYouTube(), fileName);
         UploadTask up = new UploadTask();
@@ -48,32 +51,34 @@ public class UploadVideo {
         // Todo: need to deal with null token in Main Activity
     }
 
-    public UploadVideo(String filename, String title, String description, boolean manualDescriptions,boolean isPublic) {
+    public UploadVideo(String filename, String title, String description, boolean manualDescriptions, boolean isPublic, String token) {
         this.filename = filename;
         this.TITLE = title;
         this.DESCRIPTION = description;
         this.MANUALDESCRIPTIONS = manualDescriptions;
         this.isPublic = isPublic;
-        getToken();
+        TOKEN = token;
+        System.out.println("TOKEN: " + TOKEN);
         System.out.println("FILENAME " + filename + " title " + TITLE + " description " + DESCRIPTION);
         UploadTask up = new UploadTask();
         up.execute(filename);
     }
 
-    public void getToken() {
-        Cursor c = MainActivity.db.rawQuery("SELECT * FROM tokens", null);
-        c.moveToFirst();
-        c.moveToNext(); // skip android_metadata table"insert
-        int i = 0;
-        while (c.isAfterLast() == false) {
-            System.out.println(c.toString());
-            TOKEN = c.getString( c.getColumnIndex("token"));
-            System.out.println("token: " + c.getString( c.getColumnIndex("token")));
-            System.out.println(c.getString(c.getColumnIndex("email")));
-            c.moveToNext();
-            i++;
-        }
-    }
+//    public void getToken() {
+//        Cursor c = MainActivity.db.rawQuery("SELECT * FROM tokens", null);
+//        c.moveToFirst();
+//        c.moveToNext(); // skip android_metadata table"insert
+//        int i = 0;
+//        while (c.isAfterLast() == false) {
+//            System.out.println(c.toString());
+//            TOKEN = c.getString( c.getColumnIndex("token"));
+//            System.out.println("token: " + c.getString( c.getColumnIndex("token")));
+//            System.out.println(c.getString(c.getColumnIndex("email")));
+//            c.moveToNext();
+//            i++;
+//        }
+//        prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+//    }
 
     private class UploadTask extends AsyncTask<String, Integer, Integer> {
         protected Integer doInBackground(String ... file) {

@@ -40,6 +40,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "SettingsActivity";
     private String TOKEN;
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +141,11 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             email_id.setText("Email: " + acct.getEmail());
             try {
                 new GetToken(this, acct.getEmail()).execute(); // get the token
+                System.out.println("SIGN IN: " + TOKEN);
+                if (TOKEN != null) {
+                    prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                    prefs.edit().putString("oauth", TOKEN).apply();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
