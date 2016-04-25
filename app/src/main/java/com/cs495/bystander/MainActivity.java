@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity  {
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private final int REQ_CODE_TITLE = 101;
     boolean manualVideoDescriptions;
+    String TOKEN;
     String TITLE;
     String DESCRIPTION;
     int partofdescription;
@@ -182,8 +183,8 @@ public class MainActivity extends AppCompatActivity  {
                                 }
                             });
                             builder.show();
-
-                            new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic);
+                            TOKEN = prefs.getString("oauth", null);
+                            new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic, TOKEN);
                         }
                     } else {
                         Toast.makeText(this, "Device is not online. Please manually upload later.", Toast.LENGTH_SHORT).show();
@@ -199,7 +200,8 @@ public class MainActivity extends AppCompatActivity  {
                 System.out.println("GOT TEXT!!!! " + result.get(0));
                 System.out.println("DESCRIPTION " + DESCRIPTION);
                 isPublic = prefs.getBoolean("broadcast", false);
-                new UploadVideo(FILENAME, TITLE, DESCRIPTION, manualVideoDescriptions, isPublic);
+                TOKEN = prefs.getString("oauth", null);
+                new UploadVideo(FILENAME, TITLE, DESCRIPTION, manualVideoDescriptions, isPublic, TOKEN);
             }
         } else if (REQ_CODE_TITLE == requestCode) {
             if (resultCode == RESULT_OK && null != data) {
