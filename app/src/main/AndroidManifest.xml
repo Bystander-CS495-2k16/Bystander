@@ -40,7 +40,7 @@
             android:label="@string/title_activity_settings" />
         <activity android:name=".YourRights" />
         <activity android:name=".Settings" />
-        <activity android:name=".SignInActivity"></activity>
+        <activity android:name=".SignInActivity" />
     </application>
 
 </manifest>
