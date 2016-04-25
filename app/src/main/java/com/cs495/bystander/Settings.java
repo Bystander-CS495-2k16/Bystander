@@ -57,11 +57,11 @@ public class Settings extends FragmentActivity {
 
         /* ------------------ GOOGLE AUTH ------------------ */
         public boolean onPreferenceClick(Preference preference) {
-            SignInActivity signin = new SignInActivity();
-            signin.pickAccount(this.getActivity());
-//            Activity current = SettingsFragment.this.getActivity();
-//            Intent intent = new Intent(current, SignInActivity.class);
-//            current.startActivity(intent);
+            //SignInActivity signin = new SignInActivity();
+            //signin.pickAccount(this.getActivity());
+            Activity current = SettingsFragment.this.getActivity();
+            Intent intent = new Intent(current, SignInActivity.class);
+            current.startActivity(intent);
             return true;
         }
 
