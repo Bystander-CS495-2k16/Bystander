@@ -37,212 +37,213 @@ public class DB extends SQLiteOpenHelper {
             // insert rights
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Alabama', '1pc' );"
+                    + "VALUES ( '0', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Alaska', '1pc' );"
+                    + "VALUES ( '1', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Arizona', '1pc' );"
+                    + "VALUES ( '2', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Arkansas', '1pc' );"
+                    + "VALUES ( '3', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'California', '2pc' );"
+                    + "VALUES ( '4', '2pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Colorado', '1pc' );"
+                    + "VALUES ( '5', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Connecticut', '2pc' );"
+                    + "VALUES ( '6', '2pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Delaware', '1pc' );"
+                    + "VALUES ( '7', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Florida', '2pc' );"
+                    + "VALUES ( '8', '2pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Georgia', '1pc' );"
+                    + "VALUES ( '9', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Hawaii', 'priv' );"
+                    + "VALUES ( '10', 'priv' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Idaho', '1pc' );"
+                    + "VALUES ( '11', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Illinois', 'none' );"
+                    + "VALUES ( '12', 'none' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Indiana', '1pc' );"
+                    + "VALUES ( '13', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Iowa', '1pc' );"
+                    + "VALUES ( '14', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Kansas', '1pc' );"
+                    + "VALUES ( '15', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Kentucky', '1pc' );"
+                    + "VALUES ( '16', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Louisiana', '1pc' );"
+                    + "VALUES ( '17', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Maine', '1pc' );"
+                    + "VALUES ( '18', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Maryland', '2pc' );"
+                    + "VALUES ( '19', '2pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Massachusetts', '2pc' );"
+                    + "VALUES ( '20', '2pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Michigan', '1pc' );"
+                    + "VALUES ( '21', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Minnesota', '1pc' );"
+                    + "VALUES ( '22', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Mississippi', '1pc' );"
+                    + "VALUES ( '23', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Missouri', '1pc' );"
+                    + "VALUES ( '24', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Montana', 'noti' );"
+                    + "VALUES ( '25', 'noti' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Nebraska', '1pc' );"
+                    + "VALUES ( '26', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Nevada', '2pc' );"
+                    + "VALUES ( '27', '2pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'New Hampshire', '2pc' );"
+                    + "VALUES ( '28', '2pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'New Jersey', '1pc' );"
+                    + "VALUES ( '29', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'New Mexico', '1pc' );"
+                    + "VALUES ( '30', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'New York', '1pc' );"
+                    + "VALUES ( '31', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'North Carolina', '1pc' );"
+                    + "VALUES ( '32', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'North Dakota', '1pc' );"
+                    + "VALUES ( '33', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Ohio', '1pc' );"
+                    + "VALUES ( '34', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Oklahoma', '1pc' );"
+                    + "VALUES ( '35', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Oregon', '1pc' );"
+                    + "VALUES ( '36', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Pennsylvania', '2pc' );"
+                    + "VALUES ( '37', '2pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Rhode Island', '1pc' );"
+                    + "VALUES ( '38', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'South Carolina', '1pc' );"
+                    + "VALUES ( '39', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'South Dakota', '1pc' );"
+                    + "VALUES ( '40', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Tennessee', '1pc' );"
+                    + "VALUES ( '41', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Texas', '1pc' );"
+                    + "VALUES ( '42', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Utah', '1pc' );"
+                    + "VALUES ( '43', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Vermont', '1pc' );"
+                    + "VALUES ( '44', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Virginia', '1pc' );"
+                    + "VALUES ( '45', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Washington', '2pc' );"
+                    + "VALUES ( '46', '2pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'West Virginia', '1pc' );"
+                    + "VALUES ( '47', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Wisconsin', '1pc' );"
+                    + "VALUES ( '48', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'Wyoming', '1pc' );"
+                    + "VALUES ( '49', '1pc' );"
             );
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
-                    + "VALUES ( 'DC', '1pc' );"
+                    + "VALUES ( '50', '1pc' );"
             );
 
             db.execSQL("CREATE TABLE IF NOT EXISTS videos (filename TEXT PRIMARY KEY);");
 
         } catch (Exception e) {
+            e.printStackTrace();
             for (int i = 0; i < 15; i++) {
                 System.out.println("DB FAILURE");
             }
@@ -277,6 +278,7 @@ public class DB extends SQLiteOpenHelper {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             for (int i = 0; i < 15; i++) {
                 System.out.println("DB FAILURE");
             }

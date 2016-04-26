@@ -220,4 +220,5 @@
     <string name="yourAccount">Your Account</string>
     <string name="addgmailpreference">addgmail</string>
     <string name="broadcastprivacy">broadcastprivacy</string>
+    <string name="rightsTextViewString">Rights not found. Please check your settings.</string>
 </resources>
