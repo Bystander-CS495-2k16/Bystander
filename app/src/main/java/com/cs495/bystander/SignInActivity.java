@@ -46,14 +46,34 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isSignedIn = prefs.getBoolean("signedin", false);
+        System.out.println("CHECK SIGN IN: " + isSignedIn);
+
         // Google sign in
-        buidNewGoogleApiClient();
+        buildNewGoogleApiClient();
         setContentView(R.layout.activity_sign_in);
         customizeSignBtn();
         setBtnClickListeners();
+
+        if (isSignedIn) {
+            signIn_btn = (SignInButton) findViewById(R.id.sign_in_button);
+            String user = prefs.getString("user", "");
+            String email = prefs.getString("email", "");
+            System.out.println("CHECKING TOKEN: " + prefs.getString("oauth", null));
+            TextView user_name = (TextView) findViewById(R.id.userName);
+            TextView email_id = (TextView) findViewById(R.id.emailId);
+            user_name.setText("User Name: " + user);
+            email_id.setText("Email: " + email);
+
+            updateUI(true);
+        }
+        else {
+            updateUI(false);
+        }
     }
 
-    private void buidNewGoogleApiClient() {
+    private void buildNewGoogleApiClient() {
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -110,6 +130,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     }
 
     private void signOut() {
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putBoolean("signedin", false).apply();
+        prefs.edit().putString("user", null).apply();
+        prefs.edit().putString("email", null).apply();
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
@@ -145,6 +169,11 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 if (TOKEN != null) {
                     prefs = PreferenceManager.getDefaultSharedPreferences(this);
                     prefs.edit().putString("oauth", TOKEN).apply();
+                    prefs.edit().putBoolean("signedin", true).apply();
+                    System.out.println("INSERTING USER: " + acct.getDisplayName());
+                    System.out.println("INSERTING EMAIL: " + acct.getEmail());
+                    prefs.edit().putString("user", acct.getDisplayName()).apply();
+                    prefs.edit().putString("email", acct.getEmail()).apply();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
