@@ -54,19 +54,23 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
 
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.pref_example_list_titles, android.R.layout.simple_spinner_dropdown_item);
 
+        int state;
+        if (getState() == null) state = 0;
+        else state = Integer.parseInt(getState());
+
         final TextView stateName = (TextView) findViewById(R.id.stateTextView);
-        stateName.setText(adapter.getItem(Integer.parseInt(getState())));
+        stateName.setText(adapter.getItem(state));
         final TextView rightType = (TextView) findViewById(R.id.typeTextView);
-        rightType.setText(getRightsType(getRightsCodeFromDB(getState())));
+        rightType.setText(getRightsType(getRightsCodeFromDB(Integer.toString(state))));
 
         final TextView rights = (TextView)findViewById(R.id.rightsTextView);
         // set the text to be the user's rights, by querying the db using the state preference
-        rights.setText(getRights(getRightsCodeFromDB(getState())));
+        rights.setText(getRights(getRightsCodeFromDB(Integer.toString(state))));
 
         // State Spinner
         final Spinner spinner = (Spinner) findViewById(R.id.stateSpinner);
         spinner.setAdapter(adapter);
-        spinner.setSelection(Integer.parseInt(prefs.getString("State", null)));
+        spinner.setSelection(Integer.parseInt(prefs.getString("State", "0")));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
