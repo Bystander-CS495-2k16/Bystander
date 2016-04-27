@@ -1,7 +1,15 @@
+/**************
+* Brian Burns
+* Amy Puente
+* Amy Chockley
+* Bystander
+* Uploads a video to YouTube
+* UploadVideo.java
+**************/
+
 package com.cs495.bystander;
 
-/**
- * Created by appleowner on 4/16/16.
+/*
  * Based heavily off the Google Developer Tutorial here https://developers.google.com/youtube/v3/code_samples/java#upload_a_video
  */
 
@@ -30,7 +38,11 @@ import java.util.List;
 import android.os.AsyncTask;
 import android.util.Log;
 
+/**
+ * Uploads a video to YouTube
+ */
 public class UploadVideo {
+    // Video fields
     private String TOKEN;
     private String filename;
     private String TITLE;
@@ -38,29 +50,56 @@ public class UploadVideo {
     private boolean MANUALDESCRIPTIONS;
     private boolean isPublic;
 
+    /**
+     * Constructor, gets video details
+     * @param filename The name of the captured video
+     * @param title The title of the video
+     * @param description The description of the video
+     * @param manualDescriptions Whether a description was given
+     * @param isPublic 'true' if video is to be public, 'false' if not
+     * @param token The user's OAuth 2.0 token
+     */
     public UploadVideo(String filename, String title, String description, boolean manualDescriptions, boolean isPublic, String token) {
+        // Set state variables
         this.filename = filename;
         this.TITLE = title;
         this.DESCRIPTION = description;
         this.MANUALDESCRIPTIONS = manualDescriptions;
         this.isPublic = isPublic;
         TOKEN = token;
+        // Log the upload
         Log.d("UPLOADVIDEO", "FILENAME " + filename + " title " + TITLE + " description " + DESCRIPTION);
+        // Start the upload
         UploadTask up = new UploadTask();
         up.execute(filename);
     }
 
+    /**
+     * Upload helper to execute the video upload
+     */
     private class UploadTask extends AsyncTask<String, Integer, Integer> {
+      /**
+       * Runs the upload task in the background
+       */
         protected Integer doInBackground(String ... file) {
+            // Initialize YouTube and upload the video
             upload(initYouTube(), filename);
             return 1;
         }
 
+        /**
+         * Called when the progress of the upload updates
+         */
         protected void onProgressUpdate(Integer... progress) {
 
         }
 
+        /**
+         * Initializes YouTube
+         * @return The YouTube API
+         */
         public YouTube initYouTube() {
+            // Connect to the YouTube API
             HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
             JacksonFactory JSON_FACTORY = new JacksonFactory();
             GoogleCredential credential = new GoogleCredential.Builder()
@@ -71,6 +110,11 @@ public class UploadVideo {
                     .setApplicationName("com.cs495.bystander").build();
         }
 
+        /**
+         * Upload a video to YouTube
+         * @param youtube The YouTube API
+         * @param filename The name of the captured video
+         */
         public void upload(YouTube youtube, String filename) {
             try {
 

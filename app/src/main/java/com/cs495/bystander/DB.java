@@ -1,24 +1,47 @@
+/**************
+* Brian Burns
+* Amy Puente
+* Amy Chockley
+* Bystander
+* A database to store state rights
+* DB.java
+**************/
+
 package com.cs495.bystander;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * The SQLite Database to hold state's rights
+ */
 public class DB extends SQLiteOpenHelper {
+    // State variables
     final static int DB_VERSION = 1;
     final static String DB_NAME = "mydb.s3db";
     SQLiteDatabase db;
     Context context;
 
+    /**
+     * Constructor
+     * @param context The context to use
+     */
     public DB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         // Store the context for later use
         this.context = context;
     }
 
+    /**
+     * Called by MainActivity, inserts state rights
+     * @return The initialized database
+     */
     public SQLiteDatabase makeDB() {
         try {
+            // Open the database
             db = context.openOrCreateDatabase("budget.db", Context.MODE_PRIVATE, null);
+            // Create tables
             db.execSQL("CREATE TABLE IF NOT EXISTS "
                     + "tokens"
                     + " (email TEXT PRIMARY KEY, token TEXT);");
@@ -31,7 +54,7 @@ public class DB extends SQLiteOpenHelper {
                     + "Rights"
                     + " ( state TEXT PRIMARY KEY, rights TEXT);");
 
-            // insert rights
+            // Insert state rights
             db.execSQL("INSERT OR IGNORE INTO "
                     + "Rights (state, rights) "
                     + "VALUES ( '0', '1pc' );"
@@ -246,9 +269,15 @@ public class DB extends SQLiteOpenHelper {
         return db;
     }
 
+    /**
+     * Creates a new database if one does not exist
+     * @param db The database to create
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
+
+            // Tables only to be created once
             db = context.openOrCreateDatabase("budget.db", Context.MODE_PRIVATE, null);
             db.execSQL("CREATE TABLE IF NOT EXISTS "
                     + "tokens"
@@ -268,10 +297,14 @@ public class DB extends SQLiteOpenHelper {
         }
     }
 
-    // need to add this probably
+    /**
+     * Upgrades the database when the version number is changed
+     * @param db The database to update
+     * @param oldVersion The old database version number
+     * @param newVersion The new database version number
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
 }
-

@@ -1,3 +1,12 @@
+/**************
+* Brian Burns
+* Amy Puente
+* Amy Chockley
+* Bystander
+* Main view, records and uploads videos
+* MainActivity.java
+**************/
+
 package com.cs495.bystander;
 
 import android.Manifest;
@@ -36,31 +45,48 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * The main activity for Bystander
+ */
 public class MainActivity extends AppCompatActivity  {
-
+    // Database
     public static SQLiteDatabase db;
+    // Permissions
     int PERMISSION_CAMERA;
     int PERMISSION_STORAGE;
     int PERMISSION_AUDIO;
+    // Upload video settings
     String FILENAME;
+    public static final int MEDIA_TYPE_VIDEO = 2;
+    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
+    // Speech input
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private final int REQ_CODE_TITLE = 101;
-    boolean manualVideoDescriptions;
+    // Video details
     String TOKEN;
     String TITLE;
     String DESCRIPTION;
+    // User settings
     boolean isPublic;
     boolean automaticUpload;
+    boolean manualVideoDescriptions;
+    // Shared preferences
     SharedPreferences prefs;
 
+    /**
+     * Runs the main activity, checks permissions
+     * @param savedInstanceState Activity's last known state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initialize database and add any missing values
         DB mydb = new DB(this);
         db = mydb.makeDB();
 
+        // Check permissions
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
@@ -74,10 +100,16 @@ public class MainActivity extends AppCompatActivity  {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_AUDIO);
         }
 
+        // Get shared preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     }
 
+    /**
+     * Creates the top right options menu
+     * @param menu The menu to use
+     * @return 'true' if successful, 'false' if not
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -86,6 +118,11 @@ public class MainActivity extends AppCompatActivity  {
 
     // method to start the settings activity when action bar drop down settings item is clicked
     // taken from an Android dev tutorial
+    /**
+     * Starts activities when action bar drop down item is clicked
+     * @param item The menu item that was clicked
+     * @return 'true' if starting activity succeeded, 'false' if not
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
@@ -103,9 +140,10 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    public static final int MEDIA_TYPE_VIDEO = 2;
-    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
-
+    /**
+     * Starts video capture
+     * @param view The view to start the camera intent
+     */
     public void takeVideo(View view) {
         Uri fileUri;
 
@@ -125,6 +163,12 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    /**
+     *  Called after video capture, uploads video
+     * @param requestCode Which activity has completed
+     * @param resultCode Result of the completed activity
+     * @param data The intent from the activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
@@ -132,21 +176,25 @@ public class MainActivity extends AppCompatActivity  {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
 
+                // Get relevant preferences
                 automaticUpload = prefs.getBoolean("example_switch", false);
                 isPublic = prefs.getBoolean("broadcast", false);
+                manualVideoDescriptions = prefs.getBoolean("use_speech", false);
                 TOKEN = prefs.getString("oauth", null);
 
                 if (automaticUpload) {
+                    // Check if device has connection
                     if (isDeviceOnline(this)) {
-                        manualVideoDescriptions = prefs.getBoolean("use_speech", false);
                         if (manualVideoDescriptions) { // if you upload descriptions using speech to text
                             promptSpeechInput("description");
                             promptSpeechInput("title");
                         } else {
+                            // No speech to text, use dialog
                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
                             builder.setTitle("Video Details");
                             LinearLayout layout = new LinearLayout(this);
                             layout.setOrientation(LinearLayout.VERTICAL);
+                            // Title and description inputs
                             final EditText titleInput = new EditText(this);
                             final EditText descInput = new EditText(this);
                             titleInput.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -159,34 +207,42 @@ public class MainActivity extends AppCompatActivity  {
                             builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    // User confirmed, get details
                                     TITLE = titleInput.getText().toString();
                                     DESCRIPTION = descInput.getText().toString();
+                                    // Upload video
                                     new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic, TOKEN);
                                 }
                             });
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    // User cancelled
                                     Toast.makeText(MainActivity.this, "Video Upload Cancelled", Toast.LENGTH_SHORT).show();
                                     dialog.cancel();
                                 }
                             });
+                            // Show the dialog
                             builder.show();
                         }
                     } else {
+                        // Device not online
                         Toast.makeText(this, "Device is not online. Please manually upload later.", Toast.LENGTH_SHORT).show();
                     }
-                } else { // Ask for manual upload
+                } else {
+                    // Ask for manual upload
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("Would you like to upload this video?");
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            // Check settings
                             manualVideoDescriptions = prefs.getBoolean("use_speech", false);
                             if (manualVideoDescriptions) { // if you upload descriptions using speech to text
                                 promptSpeechInput("description");
                                 promptSpeechInput("title");
                             } else {
+                                // No speech to text, use dialog
                                 AlertDialog.Builder upload = new AlertDialog.Builder(MainActivity.this);
                                 upload.setTitle("Video Details");
                                 LinearLayout layout = new LinearLayout(MainActivity.this);
@@ -222,6 +278,7 @@ public class MainActivity extends AppCompatActivity  {
                     builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            // Don't upload
                             dialog.cancel();
                         }
                     });
@@ -230,12 +287,14 @@ public class MainActivity extends AppCompatActivity  {
 
             }
         } else if (REQ_CODE_SPEECH_INPUT == requestCode) {
+            // Get speech to text answers
             if (resultCode == RESULT_OK && null != data) {
                 ArrayList<String> result = data
                         .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 DESCRIPTION = result.get(0);
                 isPublic = prefs.getBoolean("broadcast", false);
                 TOKEN = prefs.getString("oauth", null);
+                // Upload video
                 new UploadVideo(FILENAME, TITLE, DESCRIPTION, manualVideoDescriptions, isPublic, TOKEN);
             }
         } else if (REQ_CODE_TITLE == requestCode) {
@@ -247,7 +306,11 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-
+    /**
+     *  Check if device is online
+     *  @param c The context to use
+     *  @return 'true' if device online, 'false' if not
+     */
     public boolean isDeviceOnline(Context c) {
         ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
@@ -257,6 +320,8 @@ public class MainActivity extends AppCompatActivity  {
 
     /**
      * Create a File for saving an image or video
+     * @param type The type of media
+     * @return The file for the media
      */
     public static File getOutputMediaFile(int type) {
         // To be safe, you should check that the SDCard is mounted
@@ -288,14 +353,17 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     /**
-     * Showing google speech input dialog
+     * Uses Google spech input dialogs
+     * @param part Which dialog to use ('description'/'title')
      * */
     public void promptSpeechInput(String part) {
+        // Get Google speech input
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         try {
+            // Check which dialog to use
             if (part.equals("description")) {
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
                         "Add a title for your video");

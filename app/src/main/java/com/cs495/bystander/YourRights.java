@@ -1,3 +1,12 @@
+/**************
+* Brian Burns
+* Amy Puente
+* Amy Chockley
+* Bystander
+* Activity to display state rights
+* YourRights.java
+**************/
+
 package com.cs495.bystander;
 
 import android.Manifest;
@@ -30,13 +39,20 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Displays a state's right to the user
+ */
 public class YourRights extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, android.location.LocationListener {
-
+    // State variables
     private GoogleApiClient mGoogleApiClient;
     SharedPreferences prefs;
     int PERMISSION_CLOCATION;
     int PERMISSION_FLOCATION;
 
+    /**
+     * Gets preferences, sets state information
+     * @param savedInstanceState The last known activity state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,21 +66,25 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
                     .build();
         }
 
+        // Get the preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        // Get the state array for the spinner
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.pref_example_list_titles, android.R.layout.simple_spinner_dropdown_item);
 
+        // Get the user's state, set to Alabama if not set
         int state;
         if (getState() == null) state = 0;
         else state = Integer.parseInt(getState());
 
+        // Set TextViews
         final TextView stateName = (TextView) findViewById(R.id.stateTextView);
         stateName.setText(adapter.getItem(state));
         final TextView rightType = (TextView) findViewById(R.id.typeTextView);
         rightType.setText(getRightsType(getRightsCodeFromDB(Integer.toString(state))));
 
         final TextView rights = (TextView)findViewById(R.id.rightsTextView);
-        // set the text to be the user's rights, by querying the db using the state preference
+        // Set the text to be the user's rights, by querying the db using the state preference
         rights.setText(getRights(getRightsCodeFromDB(Integer.toString(state))));
 
         // State Spinner
@@ -74,6 +94,7 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Change the TextViews when the spinner changes
                 stateName.setText(adapter.getItem(parent.getSelectedItemPosition()));
                 rightType.setText(getRightsType(getRightsCodeFromDB(Integer.toString(parent.getSelectedItemPosition()))));
                 rights.setText(getRights(getRightsCodeFromDB(Integer.toString(parent.getSelectedItemPosition()))));
@@ -90,14 +111,18 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
         locButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Get the user's location
                 Location loc = getLocation();
                 if (loc != null) {
                     try {
+                        // Get the state from the lat long
                         Geocoder geocoder = new Geocoder(YourRights.this, Locale.getDefault());
                         List<Address> addresses;
                         addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
                         String state = addresses.get(0).getAdminArea();
+                        // Make sure state is in database
                         if (adapter.getPosition(state) != -1) {
+                            // Set state and TextViews to current location
                             int spinnerPos = adapter.getPosition(state);
                             spinner.setSelection(spinnerPos);
                             stateName.setText(state);
@@ -105,6 +130,7 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
                             rightType.setText(getRightsType(rightscode));
                             rights.setText(getRights(rightscode));
                         } else {
+                            // Don't have rights for current location
                             Toast.makeText(YourRights.this, "Rights not found for current location", Toast.LENGTH_SHORT).show();
                         }
                     } catch (IOException e) {
@@ -112,42 +138,63 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
                         System.err.println("Error getting location.");
                     }
                 } else {
+                    // Couldn't get location
                     Toast.makeText(YourRights.this, "Could not get location", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
+    /**
+     * Called when the activity enters view
+     */
     @Override
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
     }
 
+    /**
+     * Called when the activity exits view
+     */
     @Override
     protected void onStop() {
         mGoogleApiClient.disconnect();
         super.onStop();
     }
 
-    // gets State from settings, returns null if not found
+    /**
+     * Gets state from settings
+     * @return The state, or null if none is set
+     */
     protected String getState(){
+        // Get the state
         return prefs.getString("State", null);
     }
 
-    // get the rights from the database and return them, returns default string if not found
+    /**
+     * Get the rights from the database
+     * @param state The state to retrieve
+     * @return The rights code for the state, or "not found" if not found
+     */
     protected String getRightsCodeFromDB(String state) {
-        if (state != null) { // check if the state was actually retrieved
+        // Check if the state was actually retrieved
+        if (state != null) {
             Cursor curs = MainActivity.db.rawQuery("select rights from Rights where state = " + state + ";", null);
             curs.moveToFirst();
             if (!curs.isAfterLast())
-                return curs.getString(curs.getColumnIndex("rights")); // return the rights
+                // Return the rights
+                return curs.getString(curs.getColumnIndex("rights"));
             curs.close();
         }
         return "not found";
     }
 
-    // takes the output from a query and matches the code with the type of rights associated with it
+    /**
+     * Takes the output from a query and matches the code with the type of rights associated with it
+     * @param rightType The rights code from the state retrieved
+     * @return The rights explanation for the rights code
+     */
     protected String getRights(String rightType) {
         switch (rightType) {
             case "1pc":
@@ -165,6 +212,11 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
         }
     }
 
+    /**
+     * Takes the output from a query and matches the code with the full name of the rights associated with it
+     * @param rightCode The rights code from the state retrieved
+     * @return The full name of the rights code
+     */
     protected String getRightsType(String rightCode) {
         switch (rightCode) {
             case "1pc":
@@ -182,8 +234,13 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
         }
     }
 
+    /**
+     * Gets the user's location
+     * @return The Location object
+     */
     private Location getLocation() {
         try {
+            // Check permissions
             int permissionCheck = ContextCompat.checkSelfPermission(YourRights.this, Manifest.permission.ACCESS_COARSE_LOCATION);
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(YourRights.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_CLOCATION);
@@ -193,16 +250,21 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
                 ActivityCompat.requestPermissions(YourRights.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_FLOCATION);
             }
 
+            // Get the location manager
             LocationManager locManager = (LocationManager) this.getBaseContext().getSystemService(LOCATION_SERVICE);
+            // Check for enabled services
             boolean isGPSEnabled = locManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             boolean isNetworkEnabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            // If the device cannot determine location
             if (!isGPSEnabled && !isNetworkEnabled) {
                 return null;
             } else {
+                // If the device is network connected
                 if (isNetworkEnabled) {
                     locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, (float) 50.0, this);
                     return locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 } else {
+                    // The device is GPS connected
                     locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, (float) 50.0, this);
                     return locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 }
