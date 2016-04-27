@@ -5,7 +5,7 @@
     <string name="broadcastString">Broadcast!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="main_description"><html><p>Record what you \n<i>witness</i>\n and <b>share</b> at the touch of a button</p></html></string>
+    <string name="main_description"><html><p>Record what you \n<i>witness</i>\n and <b>share</b> at the touch of a button.</p></html></string>
 
     <!-- Strings related to Settings -->
 
