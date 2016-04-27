@@ -60,9 +60,27 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
         final TextView rightType = (TextView) findViewById(R.id.typeTextView);
         rightType.setText(getRightsType(getRightsCodeFromDB(getState())));
 
-        final TextView rights = (TextView)findViewById(R.id.rightsextView);
+        final TextView rights = (TextView)findViewById(R.id.rightsTextView);
         // set the text to be the user's rights, by querying the db using the state preference
         rights.setText(getRights(getRightsCodeFromDB(getState())));
+
+        // State Spinner
+        final Spinner spinner = (Spinner) findViewById(R.id.stateSpinner);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(Integer.parseInt(prefs.getString("State", null)));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                stateName.setText(adapter.getItem(parent.getSelectedItemPosition()));
+                rightType.setText(getRightsType(getRightsCodeFromDB(Integer.toString(parent.getSelectedItemPosition()))));
+                rights.setText(getRights(getRightsCodeFromDB(Integer.toString(parent.getSelectedItemPosition()))));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
 
         // Initialize location button
         Button locButton = (Button) findViewById(R.id.locButton);
@@ -76,6 +94,16 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
                         List<Address> addresses;
                         addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
                         String state = addresses.get(0).getAdminArea();
+                        if (adapter.getPosition(state) != -1) {
+                            int spinnerPos = adapter.getPosition(state);
+                            spinner.setSelection(spinnerPos);
+                            stateName.setText(state);
+                            String rightscode = getRightsCodeFromDB(Integer.toString(spinnerPos));
+                            rightType.setText(getRightsType(rightscode));
+                            rights.setText(getRights(rightscode));
+                        } else {
+                            Toast.makeText(YourRights.this, "Rights not found for current location", Toast.LENGTH_SHORT).show();
+                        }
                         Toast.makeText(YourRights.this, state, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -84,24 +112,6 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
                 } else {
                     Toast.makeText(YourRights.this, "Could not get location", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-
-        Spinner spinner = (Spinner) findViewById(R.id.stateSpinner);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(Integer.parseInt(prefs.getString("State", null)));
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                stateName.setText(adapter.getItem(parent.getSelectedItemPosition()));
-                rightType.setText(getRightsType(getRightsCodeFromDB(Integer.toString(parent.getSelectedItemPosition()))));
-                String item = parent.getItemAtPosition(position).toString();
-                rights.setText(getRights(getRightsCodeFromDB(Integer.toString(parent.getSelectedItemPosition()))));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
             }
         });
     }
