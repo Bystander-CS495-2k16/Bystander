@@ -166,14 +166,14 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             try {
                 new GetToken(this, acct.getEmail()).execute(); // get the token
                 System.out.println("SIGN IN: " + TOKEN);
+                prefs.edit().putBoolean("signedin", true).apply();
+                System.out.println("INSERTING USER: " + acct.getDisplayName());
+                System.out.println("INSERTING EMAIL: " + acct.getEmail());
+                prefs.edit().putString("user", acct.getDisplayName()).apply();
+                prefs.edit().putString("email", acct.getEmail()).apply();
                 if (TOKEN != null) {
                     prefs = PreferenceManager.getDefaultSharedPreferences(this);
                     prefs.edit().putString("oauth", TOKEN).apply();
-                    prefs.edit().putBoolean("signedin", true).apply();
-                    System.out.println("INSERTING USER: " + acct.getDisplayName());
-                    System.out.println("INSERTING EMAIL: " + acct.getEmail());
-                    prefs.edit().putString("user", acct.getDisplayName()).apply();
-                    prefs.edit().putString("email", acct.getEmail()).apply();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
