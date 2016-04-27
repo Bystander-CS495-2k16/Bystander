@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.cs495.bystander.SignInActivity">
+    tools:context="com.cs495.bystander.SignInActivity"
+    android:background="@android:color/darker_gray">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
@@ -57,7 +58,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/sign_out"/>
+            android:text="@string/sign_out"
+            android:background="@drawable/button_rounded"
+            android:textColor="#ffffff" />
 
     </LinearLayout>
 
