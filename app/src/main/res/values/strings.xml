@@ -221,4 +221,10 @@
     <string name="addgmailpreference">addgmail</string>
     <string name="broadcastprivacy">broadcastprivacy</string>
     <string name="rightsTextViewString">Rights not found. Please check your settings.</string>
+    <string name="user_name">User Name: %1$s</string>
+    <string name="user_email">Email: %1$s</string>
+    <string name="view_rights">View Rights</string>
+    <string name="choose_state">Choose Another State</string>
+    <string name="use_location">Use Your Location</string>
+    <string name="sign_out">Sign Out</string>
 </resources>

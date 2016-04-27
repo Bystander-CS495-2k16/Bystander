@@ -27,11 +27,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-
+import android.util.Log;
 
 public class UploadVideo {
     private String TOKEN;
@@ -40,16 +37,6 @@ public class UploadVideo {
     private String DESCRIPTION;
     private boolean MANUALDESCRIPTIONS;
     private boolean isPublic;
-    SharedPreferences prefs;
-
-    public UploadVideo(String fileName) {
-        this.filename = fileName;
-        System.out.println("FILENAME " + fileName);
-        //upload(initYouTube(), fileName);
-        UploadTask up = new UploadTask();
-        up.execute(fileName);
-        // Todo: need to deal with null token in Main Activity
-    }
 
     public UploadVideo(String filename, String title, String description, boolean manualDescriptions, boolean isPublic, String token) {
         this.filename = filename;
@@ -58,27 +45,10 @@ public class UploadVideo {
         this.MANUALDESCRIPTIONS = manualDescriptions;
         this.isPublic = isPublic;
         TOKEN = token;
-        System.out.println("TOKEN: " + TOKEN);
-        System.out.println("FILENAME " + filename + " title " + TITLE + " description " + DESCRIPTION);
+        Log.d("UPLOADVIDEO", "FILENAME " + filename + " title " + TITLE + " description " + DESCRIPTION);
         UploadTask up = new UploadTask();
         up.execute(filename);
     }
-
-//    public void getToken() {
-//        Cursor c = MainActivity.db.rawQuery("SELECT * FROM tokens", null);
-//        c.moveToFirst();
-//        c.moveToNext(); // skip android_metadata table"insert
-//        int i = 0;
-//        while (c.isAfterLast() == false) {
-//            System.out.println(c.toString());
-//            TOKEN = c.getString( c.getColumnIndex("token"));
-//            System.out.println("token: " + c.getString( c.getColumnIndex("token")));
-//            System.out.println(c.getString(c.getColumnIndex("email")));
-//            c.moveToNext();
-//            i++;
-//        }
-//        prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-//    }
 
     private class UploadTask extends AsyncTask<String, Integer, Integer> {
         protected Integer doInBackground(String ... file) {
@@ -87,10 +57,6 @@ public class UploadVideo {
         }
 
         protected void onProgressUpdate(Integer... progress) {
-
-        }
-
-        protected void onPostExecute(Long result) {
 
         }
 
@@ -106,7 +72,6 @@ public class UploadVideo {
         }
 
         public void upload(YouTube youtube, String filename) {
-            System.out.println("Uploading: " + filename);
             try {
 
                 // Add extra information to the video before uploading.
@@ -139,33 +104,15 @@ public class UploadVideo {
                 }
 
                 // Set the keyword tags that you want to associate with the video.
-                List<String> tags = new ArrayList<String>();
+                List<String> tags = new ArrayList<>();
                 tags.add("Bystander");
-                //tags.add("example");
-                //tags.add("java");
-                //tags.add("YouTube Data API V3");
-                //tags.add("erase me");
                 snippet.setTags(tags);
 
                 // Add the completed snippet object to the video resource.
                 videoObjectDefiningMetadata.setSnippet(snippet);
 
-                //InputStreamContent mediaContent = new InputStreamContent("video/*",
-                //        UploadVideo.class.getResourceAsStream(filename));
-
                 InputStream in = new BufferedInputStream(new FileInputStream(new File(filename)));
-                File f = new File(filename);
-                System.out.println("instream length " + f.length());
                 InputStreamContent mediaContent = new InputStreamContent("video/*", in);
-                System.out.println("LENGTH OF STREAMZZZ " + mediaContent.getLength());
-                /*while (mediaContent.getLength() == -1) {
-                    try {
-                        System.out.println("waiting...");
-                        Thread.sleep(2000);                 //1000 milliseconds is one second.
-                    } catch(InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                }*/
 
                 // Insert the video. The command sends three arguments. The first
                 // specifies which information the API request is setting and which
@@ -192,20 +139,20 @@ public class UploadVideo {
                     public void progressChanged(MediaHttpUploader uploader) throws IOException {
                         switch (uploader.getUploadState()) {
                             case INITIATION_STARTED:
-                                System.out.println("Initiation Started");
+                                Log.d("UPLOADVIDEO", "Initiation Started");
                                 break;
                             case INITIATION_COMPLETE:
-                                System.out.println("Initiation Completed");
+                                Log.d("UPLOADVIDEO", "Initiation Completed");
                                 break;
                             case MEDIA_IN_PROGRESS:
-                                System.out.println("Upload in progress");
-                                System.out.println("Upload percentage: " + uploader.getNumBytesUploaded());
+                                Log.d("UPLOADVIDEO", "Upload in progress");
+                                Log.d("UPLOADVIDEO", "Upload percentage: " + uploader.getNumBytesUploaded());
                                 break;
                             case MEDIA_COMPLETE:
-                                System.out.println("Upload Completed!");
+                                Log.d("UPLOADVIDEO", "Upload Completed!");
                                 break;
                             case NOT_STARTED:
-                                System.out.println("Upload Not Started!");
+                                Log.d("UPLOADVIDEO", "Upload Not Started!");
                                 break;
                         }
                     }
@@ -216,12 +163,12 @@ public class UploadVideo {
                 Video returnedVideo = videoInsert.execute();
 
                 // Print data about the newly inserted video from the API response.
-                System.out.println("\n================== Returned Video ==================\n");
-                System.out.println("  - Id: " + returnedVideo.getId());
-                System.out.println("  - Title: " + returnedVideo.getSnippet().getTitle());
-                System.out.println("  - Tags: " + returnedVideo.getSnippet().getTags());
-                System.out.println("  - Privacy Status: " + returnedVideo.getStatus().getPrivacyStatus());
-                System.out.println("  - Video Count: " + returnedVideo.getStatistics().getViewCount());
+                Log.d("UPLOADVIDEO", "\n================== Returned Video ==================\n");
+                Log.d("UPLOADVIDEO", "  - Id: " + returnedVideo.getId());
+                Log.d("UPLOADVIDEO", "  - Title: " + returnedVideo.getSnippet().getTitle());
+                Log.d("UPLOADVIDEO", "  - Tags: " + returnedVideo.getSnippet().getTags());
+                Log.d("UPLOADVIDEO", "  - Privacy Status: " + returnedVideo.getStatus().getPrivacyStatus());
+                Log.d("UPLOADVIDEO", "  - Video Count: " + returnedVideo.getStatistics().getViewCount());
 
             } catch (GoogleJsonResponseException e) {
                 System.err.println("GoogleJsonResponseException code: " + e.getDetails().getCode() + " : "

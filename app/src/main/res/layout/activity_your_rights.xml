@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Choose Another State"
+        android:text="@string/choose_state"
         android:id="@+id/selectTextView"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
@@ -58,7 +58,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Use Your Location"
+        android:text="@string/use_location"
         android:id="@+id/locButton"
         android:layout_below="@+id/stateSpinner"
         android:layout_centerHorizontal="true" />

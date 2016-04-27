@@ -9,6 +9,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +24,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -104,7 +103,6 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
                         } else {
                             Toast.makeText(YourRights.this, "Rights not found for current location", Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(YourRights.this, state, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                         System.err.println("Error getting location.");
@@ -130,22 +128,17 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
 
     // gets State from settings, returns null if not found
     protected String getState(){
-        System.out.println("state " + prefs.getString("State", null));
         return prefs.getString("State", null);
     }
 
     // get the rights from the database and return them, returns default string if not found
     protected String getRightsCodeFromDB(String state) {
         if (state != null) { // check if the state was actually retrieved
-            System.out.println("state again " + state);
             Cursor curs = MainActivity.db.rawQuery("select rights from Rights where state = " + state + ";", null);
             curs.moveToFirst();
-            System.out.println("before while loop");
-            System.out.println("curs is after last " + curs.isAfterLast());
-            while (curs.isAfterLast() == false) {
-                System.out.println("state rights " + curs.getString(curs.getColumnIndex("rights")));
+            if (!curs.isAfterLast())
                 return curs.getString(curs.getColumnIndex("rights")); // return the rights
-            }
+            curs.close();
         }
         return "not found";
     }
@@ -205,8 +198,7 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
                 if (isNetworkEnabled) {
                     locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, (float) 50.0, this);
                     return locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                }
-                if (isGPSEnabled) {
+                } else {
                     locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, (float) 50.0, this);
                     return locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 }
@@ -219,7 +211,7 @@ public class YourRights extends AppCompatActivity implements GoogleApiClient.OnC
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 

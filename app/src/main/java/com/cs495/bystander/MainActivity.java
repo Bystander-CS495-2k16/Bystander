@@ -11,10 +11,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -25,7 +23,6 @@ import android.util.Log;
 import android.view.View;
 
 import java.io.File;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import android.view.Menu;
@@ -36,8 +33,6 @@ import android.content.ActivityNotFoundException;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.google.android.gms.drive.Permission;
 
 import java.util.ArrayList;
 
@@ -54,7 +49,6 @@ public class MainActivity extends AppCompatActivity  {
     String TOKEN;
     String TITLE;
     String DESCRIPTION;
-    int partofdescription;
     boolean isPublic;
     boolean automaticUpload;
     SharedPreferences prefs;
@@ -84,11 +78,6 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-    // method to init return a database
-    public static SQLiteDatabase getDb() {
-        return db;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -114,23 +103,22 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-    private Uri fileUri;
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
 
     public void takeVideo(View view) {
+        Uri fileUri;
 
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
         File file = getOutputMediaFile(MEDIA_TYPE_VIDEO);
-        FILENAME = file.toString();
+        if (file != null)
+            FILENAME = file.toString();
         fileUri = Uri.fromFile(file); // create a file to save the image
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
         intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-        System.out.println("filename " + fileUri.toString());
 
         // start the image capture Intent
         startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
@@ -194,35 +182,41 @@ public class MainActivity extends AppCompatActivity  {
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            AlertDialog.Builder upload = new AlertDialog.Builder(MainActivity.this);
-                            upload.setTitle("Video Details");
-                            LinearLayout layout = new LinearLayout(MainActivity.this);
-                            layout.setOrientation(LinearLayout.VERTICAL);
-                            final EditText titleInput = new EditText(MainActivity.this);
-                            final EditText descInput = new EditText(MainActivity.this);
-                            titleInput.setInputType(InputType.TYPE_CLASS_TEXT);
-                            descInput.setInputType(InputType.TYPE_CLASS_TEXT);
-                            titleInput.setHint("Title");
-                            descInput.setHint("Description");
-                            layout.addView(titleInput);
-                            layout.addView(descInput);
-                            upload.setView(layout);
-                            upload.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    TITLE = titleInput.getText().toString();
-                                    DESCRIPTION = descInput.getText().toString();
-                                    new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic, TOKEN);
-                                }
-                            });
-                            upload.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(MainActivity.this, "Video Upload Cancelled", Toast.LENGTH_SHORT).show();
-                                    dialog.cancel();
-                                }
-                            });
-                            upload.show();
+                            manualVideoDescriptions = prefs.getBoolean("use_speech", false);
+                            if (manualVideoDescriptions) { // if you upload descriptions using speech to text
+                                promptSpeechInput("description");
+                                promptSpeechInput("title");
+                            } else {
+                                AlertDialog.Builder upload = new AlertDialog.Builder(MainActivity.this);
+                                upload.setTitle("Video Details");
+                                LinearLayout layout = new LinearLayout(MainActivity.this);
+                                layout.setOrientation(LinearLayout.VERTICAL);
+                                final EditText titleInput = new EditText(MainActivity.this);
+                                final EditText descInput = new EditText(MainActivity.this);
+                                titleInput.setInputType(InputType.TYPE_CLASS_TEXT);
+                                descInput.setInputType(InputType.TYPE_CLASS_TEXT);
+                                titleInput.setHint("Title");
+                                descInput.setHint("Description");
+                                layout.addView(titleInput);
+                                layout.addView(descInput);
+                                upload.setView(layout);
+                                upload.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        TITLE = titleInput.getText().toString();
+                                        DESCRIPTION = descInput.getText().toString();
+                                        new UploadVideo(FILENAME, TITLE, DESCRIPTION, true, isPublic, TOKEN);
+                                    }
+                                });
+                                upload.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(MainActivity.this, "Video Upload Cancelled", Toast.LENGTH_SHORT).show();
+                                        dialog.cancel();
+                                    }
+                                });
+                                upload.show();
+                            }
                         }
                     });
                     builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -240,8 +234,6 @@ public class MainActivity extends AppCompatActivity  {
                 ArrayList<String> result = data
                         .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 DESCRIPTION = result.get(0);
-                System.out.println("GOT TEXT!!!! " + result.get(0));
-                System.out.println("DESCRIPTION " + DESCRIPTION);
                 isPublic = prefs.getBoolean("broadcast", false);
                 TOKEN = prefs.getString("oauth", null);
                 new UploadVideo(FILENAME, TITLE, DESCRIPTION, manualVideoDescriptions, isPublic, TOKEN);
@@ -251,8 +243,6 @@ public class MainActivity extends AppCompatActivity  {
                 ArrayList<String> result = data
                         .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 TITLE = result.get(0);
-                System.out.println("GOT TEXT!!!! " + result.get(0));
-                System.out.println("TITLE " + TITLE);
             }
         }
     }
@@ -261,11 +251,7 @@ public class MainActivity extends AppCompatActivity  {
     public boolean isDeviceOnline(Context c) {
         ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
-        if (ni == null) {
-            // There are no active networks.
-            return false;
-        }
-        return ni.isConnected();
+        return ni != null && ni.isConnected();
     }
 
 
@@ -289,18 +275,12 @@ public class MainActivity extends AppCompatActivity  {
             }
         }
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         File mediaFile;
         if (type == MEDIA_TYPE_VIDEO) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                     "VID_" + timeStamp + ".mp4");
-            System.out.println("MEDIA FILE " + mediaFile);
             MainActivity.db.execSQL("INSERT OR REPLACE INTO videos (filename) VALUES (\'" + mediaFile.toString() + "\')");
-        } else if (type == MEDIA_TYPE_VIDEO) {
-/*            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_" + timeStamp + ".mp4");*/
-            mediaFile = new File(mediaStorageDir.getPath() +
-                    "VID_" + timeStamp + ".mp4");
         } else {
             return null;
         }
@@ -316,11 +296,11 @@ public class MainActivity extends AppCompatActivity  {
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         try {
-            if (part == "description") {
+            if (part.equals("description")) {
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
                         "Add a title for your video");
                 startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-            } else if (part == "title"){
+            } else if (part.equals("title")) {
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
                         "Add a description to your video");
                 startActivityForResult(intent, REQ_CODE_TITLE);

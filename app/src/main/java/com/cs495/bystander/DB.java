@@ -4,9 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/**
- * Created by appleowner on 4/5/16.
- */
 public class DB extends SQLiteOpenHelper {
     final static int DB_VERSION = 1;
     final static String DB_NAME = "mydb.s3db";
@@ -21,7 +18,7 @@ public class DB extends SQLiteOpenHelper {
 
     public SQLiteDatabase makeDB() {
         try {
-            db = context.openOrCreateDatabase("budget.db", context.MODE_PRIVATE, null);
+            db = context.openOrCreateDatabase("budget.db", Context.MODE_PRIVATE, null);
             db.execSQL("CREATE TABLE IF NOT EXISTS "
                     + "tokens"
                     + " (email TEXT PRIMARY KEY, token TEXT);");
@@ -244,20 +241,15 @@ public class DB extends SQLiteOpenHelper {
 
         } catch (Exception e) {
             e.printStackTrace();
-            for (int i = 0; i < 15; i++) {
-                System.out.println("DB FAILURE");
-            }
+            System.err.println("DB FAILURE");
         }
         return db;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        for (int i = 0; i < 15; i++) {
-            System.out.println("DB");
-        }
         try {
-            db = context.openOrCreateDatabase("budget.db", context.MODE_PRIVATE, null);
+            db = context.openOrCreateDatabase("budget.db", Context.MODE_PRIVATE, null);
             db.execSQL("CREATE TABLE IF NOT EXISTS "
                     + "tokens"
                     + " (email TEXT PRIMARY KEY, token TEXT);");
@@ -265,23 +257,14 @@ public class DB extends SQLiteOpenHelper {
             db.execSQL("CREATE TABLE IF NOT EXISTS "
                     + "UserSettings"
                     + " ( email TEXT PRIMARY KEY, broadcastOn BOOLEAN, privacySetting TEXT, state TEXT);");
-            for (int i = 0; i < 15; i++) {
-                System.out.println("DB");
-            }
 
             db.execSQL("CREATE TABLE IF NOT EXISTS "
                     + "Rights"
                     + " ( state TEXT PRIMARY KEY, rights TEXT);");
 
-            for (int i = 0; i < 15; i++) {
-                System.out.println("DB");
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
-            for (int i = 0; i < 15; i++) {
-                System.out.println("DB FAILURE");
-            }
+            System.err.println("DB FAILURE");
         }
     }
 

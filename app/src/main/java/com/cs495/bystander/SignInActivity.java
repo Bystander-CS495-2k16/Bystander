@@ -1,9 +1,9 @@
 package com.cs495.bystander;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,7 +48,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isSignedIn = prefs.getBoolean("signedin", false);
-        System.out.println("CHECK SIGN IN: " + isSignedIn);
 
         // Google sign in
         buildNewGoogleApiClient();
@@ -60,11 +59,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             signIn_btn = (SignInButton) findViewById(R.id.sign_in_button);
             String user = prefs.getString("user", "");
             String email = prefs.getString("email", "");
-            System.out.println("CHECKING TOKEN: " + prefs.getString("oauth", null));
             TextView user_name = (TextView) findViewById(R.id.userName);
             TextView email_id = (TextView) findViewById(R.id.emailId);
-            user_name.setText("User Name: " + user);
-            email_id.setText("Email: " + email);
+            user_name.setText(getString(R.string.user_name, user));
+            email_id.setText(getString(R.string.user_email, email));
 
             updateUI(true);
         }
@@ -137,7 +135,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
-                    public void onResult(Status status) {
+                    public void onResult(@NonNull Status status) {
 
                         updateUI(false);
 
@@ -161,19 +159,18 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             GoogleSignInAccount acct = result.getSignInAccount();
             TextView user_name = (TextView) findViewById(R.id.userName);
             TextView email_id = (TextView) findViewById(R.id.emailId);
-            user_name.setText("User Name: " + acct.getDisplayName());
-            email_id.setText("Email: " + acct.getEmail());
             try {
-                new GetToken(this, acct.getEmail()).execute(); // get the token
-                System.out.println("SIGN IN: " + TOKEN);
-                prefs.edit().putBoolean("signedin", true).apply();
-                System.out.println("INSERTING USER: " + acct.getDisplayName());
-                System.out.println("INSERTING EMAIL: " + acct.getEmail());
-                prefs.edit().putString("user", acct.getDisplayName()).apply();
-                prefs.edit().putString("email", acct.getEmail()).apply();
-                if (TOKEN != null) {
-                    prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                    prefs.edit().putString("oauth", TOKEN).apply();
+                if (acct != null && acct.getDisplayName() != null && acct.getEmail() != null) {
+                    user_name.setText(getString(R.string.user_name, acct.getDisplayName()));
+                    email_id.setText(getString(R.string.user_email, acct.getEmail()));
+                    new GetToken(this, acct.getEmail()).execute(); // get the token
+                    prefs.edit().putBoolean("signedin", true).apply();
+                    prefs.edit().putString("user", acct.getDisplayName()).apply();
+                    prefs.edit().putString("email", acct.getEmail()).apply();
+                    if (TOKEN != null) {
+                        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                        prefs.edit().putString("oauth", TOKEN).apply();
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -195,7 +192,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
@@ -219,7 +216,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             try {
                 TOKEN = fetchToken();
             } catch (IOException e) {
-
+                e.printStackTrace();
             }
             return null;
         }
@@ -231,7 +228,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
          */
         protected String fetchToken() throws IOException {
             try {
-                System.out.println("username " + username);
                 return GoogleAuthUtil.getToken(mActivity, username, "oauth2:https://www.googleapis.com/auth/youtube.force-ssl");
             } catch (UserRecoverableAuthException userRecoverableException) {
                 // GooglePlayServices.apk is either old, disabled, or not present
